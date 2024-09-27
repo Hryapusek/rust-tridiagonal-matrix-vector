@@ -1,4 +1,4 @@
-# Task 1 on Voskoboynikov math - Tridigonal matrix method
+# Task 1 on Voskoboynikov math - Tridiagonal matrix method
 ## Description
 The goal of tridiagonal method is to solve equation like `Ax = b`, where `A` is a *tridiagonal matrix*, `b` is a *vector*, and `x` is a desired *solution vector*.
 ```
