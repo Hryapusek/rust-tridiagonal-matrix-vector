@@ -3,75 +3,81 @@ use core::panic;
 use nalgebra::DMatrix;
 use nalgebra::DVector;
 
+#[allow(unused)]
 pub type Number = f64;
 
-fn check_if_three_diagonals(A: &DMatrix<Number>) -> () {
-    for row in 0..A.nrows() {
-        for col in 0..A.ncols() {
-            if !(row.abs_diff(col) <= 1) && (A[(row, col)] != 0.0) {
+#[allow(unused)]
+fn check_if_three_diagonals(a: &DMatrix<Number>) -> () {
+    for row in 0..a.nrows() {
+        for col in 0..a.ncols() {
+            if !(row.abs_diff(col) <= 1) && (a[(row, col)] != 0.0) {
                 panic!("Matrix is not diagonally dominant");
             }
         }
     }
 }
 
-fn calculate_V_coefficients(A: &DMatrix<Number>) -> DVector<Number> {
-    let mut v_arr = DVector::<Number>::from_vec(vec![0.0; A.nrows()]);
-    v_arr[0] = A[(0, 1)] / (-A[(0, 0)]);
-    for i in 1..A.nrows() - 1 {
-        v_arr[i] = A[(i, i + 1)] / (-A[(i, i)] - A[(i, i - 1)] * v_arr[i - 1]);
+#[allow(unused)]
+fn calculate_v_coefficients(a: &DMatrix<Number>) -> DVector<Number> {
+    let mut v_arr = DVector::<Number>::from_vec(vec![0.0; a.nrows()]);
+    v_arr[0] = a[(0, 1)] / (-a[(0, 0)]);
+    for i in 1..a.nrows() - 1 {
+        v_arr[i] = a[(i, i + 1)] / (-a[(i, i)] - a[(i, i - 1)] * v_arr[i - 1]);
     }
-    v_arr[A.nrows() - 1] = 0.0;
+    v_arr[a.nrows() - 1] = 0.0;
     return v_arr;
 }
 
-fn calculate_U_coefficients(
-    A: &DMatrix<Number>,
+#[allow(unused)]
+fn calculate_u_coefficients(
+    a: &DMatrix<Number>,
     b: &DVector<Number>,
     v_arr: &DVector<Number>,
 ) -> DVector<Number> {
-    let mut u_arr = DVector::<Number>::from_vec(vec![0.0; A.nrows()]);
-    u_arr[0] = -b[0] / (-A[(0, 0)]);
-    for i in 1..A.nrows() - 1 {
+    let mut u_arr = DVector::<Number>::from_vec(vec![0.0; a.nrows()]);
+    u_arr[0] = -b[0] / (-a[(0, 0)]);
+    for i in 1..a.nrows() - 1 {
         u_arr[i] =
-            (A[(i, i - 1)] * u_arr[i - 1] - b[i]) / (-A[(i, i)] - A[(i, i - 1)] * v_arr[i - 1]);
+            (a[(i, i - 1)] * u_arr[i - 1] - b[i]) / (-a[(i, i)] - a[(i, i - 1)] * v_arr[i - 1]);
     }
-    u_arr[A.nrows() - 1] = (A[(A.nrows() - 1, A.nrows() - 2)] * u_arr[A.nrows() - 2]
-        - b[A.nrows() - 1])
-        / (-A[(A.nrows() - 1, A.nrows() - 1)]
-            - A[(A.nrows() - 1, A.nrows() - 2)] * v_arr[A.nrows() - 2]);
+    u_arr[a.nrows() - 1] = (a[(a.nrows() - 1, a.nrows() - 2)] * u_arr[a.nrows() - 2]
+        - b[a.nrows() - 1])
+        / (-a[(a.nrows() - 1, a.nrows() - 1)]
+            - a[(a.nrows() - 1, a.nrows() - 2)] * v_arr[a.nrows() - 2]);
     return u_arr;
 }
 
+#[allow(unused)]
 pub fn vectors_almost_equal(
-  vec1: &DVector<Number>,
-  vec2: &DVector<Number>,
-  epsilon: Number,
+    vec1: &DVector<Number>,
+    vec2: &DVector<Number>,
+    epsilon: Number,
 ) -> bool {
-  if vec1.len() != vec2.len() {
-      return false;
-  }
+    if vec1.len() != vec2.len() {
+        return false;
+    }
 
-  for i in 0..vec1.len() {
-      if (vec1[i] - vec2[i]).abs() > epsilon {
-          return false;
-      }
-  }
+    for i in 0..vec1.len() {
+        if (vec1[i] - vec2[i]).abs() > epsilon {
+            return false;
+        }
+    }
 
-  true
+    true
 }
 
-pub fn solve(A: &DMatrix<Number>, b: &DVector<Number>) -> DVector<Number> {
-    check_if_three_diagonals(A);
-    if A.nrows() != A.ncols() {
+#[allow(unused)]
+pub fn solve(a: &DMatrix<Number>, b: &DVector<Number>) -> DVector<Number> {
+    check_if_three_diagonals(a);
+    if a.nrows() != a.ncols() {
         panic!("The matrix is not square");
     }
-    let mut v_arr = calculate_V_coefficients(A);
-    let mut u_arr = calculate_U_coefficients(A, b, &v_arr);
+    let mut v_arr = calculate_v_coefficients(a);
+    let mut u_arr = calculate_u_coefficients(a, b, &v_arr);
 
-    let mut x_arr = DVector::<Number>::zeros(A.ncols());
-    x_arr[A.nrows() - 1] = u_arr[A.nrows() - 1];
-    for i in (0..A.nrows() - 1).rev() {
+    let mut x_arr = DVector::<Number>::zeros(a.ncols());
+    x_arr[a.nrows() - 1] = u_arr[a.nrows() - 1];
+    for i in (0..a.nrows() - 1).rev() {
         x_arr[i] = u_arr[i] + v_arr[i] * x_arr[i + 1];
     }
 
@@ -79,11 +85,12 @@ pub fn solve(A: &DMatrix<Number>, b: &DVector<Number>) -> DVector<Number> {
 }
 
 mod tests {
-    use super::check_if_three_diagonals;
     use super::*;
+    #[allow(unused_imports)]
     use nalgebra::{DMatrix, RowDVector};
 
     #[test]
+    #[allow(non_snake_case)]
     fn check_if_three_diagonals__correct_matrix() {
         let example_matrix = DMatrix::<Number>::from_rows(&[
             RowDVector::from_vec(vec![1., 2., 0., 0., 0.]),
@@ -96,6 +103,7 @@ mod tests {
 
     #[test]
     #[should_panic]
+    #[allow(non_snake_case)]
     fn check_if_three_diagonals__incorrect_matrix_1() {
         let example_matrix = DMatrix::<Number>::from_rows(&[
             RowDVector::from_vec(vec![1., 2., 3., 0., 0.]),
@@ -108,6 +116,7 @@ mod tests {
 
     #[test]
     #[should_panic]
+    #[allow(non_snake_case)]
     fn check_if_three_diagonals__incorrect_matrix_2() {
         let example_matrix = DMatrix::<Number>::from_rows(&[
             RowDVector::from_vec(vec![1., 2., 0., 0., 0.]),
@@ -120,6 +129,7 @@ mod tests {
 
     #[test]
     #[should_panic]
+    #[allow(non_snake_case)]
     fn check_if_three_diagonals__incorrect_matrix_3() {
         let example_matrix = DMatrix::<Number>::from_rows(&[
             RowDVector::from_vec(vec![1., 2., 0., 0., 0.]),
@@ -131,6 +141,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(non_snake_case)]
     fn check_if_three_diagonals__correct_matrix_2() {
         let example_matrix = DMatrix::<Number>::from_rows(&[
             RowDVector::from_vec(vec![1., 2., 0., 0., 0.]),
@@ -143,6 +154,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(non_snake_case)]
     fn check_if_three_diagonals__correct_matrix_3() {
         let example_matrix = DMatrix::<Number>::from_rows(&[
             RowDVector::from_vec(vec![1., 2., 0., 0., 0.]),
@@ -156,6 +168,7 @@ mod tests {
 
     #[test]
     #[should_panic]
+    #[allow(non_snake_case)]
     fn check_if_three_diagonals__incorrect_matrix_4() {
         let example_matrix = DMatrix::<Number>::from_rows(&[
             RowDVector::from_vec(vec![1., 2., 0., 0., -1.]),
@@ -169,21 +182,21 @@ mod tests {
     mod solver {
         use super::*;
 
-        fn calculate_b(A: &DMatrix<Number>, x_arr: &DVector<Number>) -> DVector<Number> {
-            return A * x_arr;
+        #[allow(unused)]
+        fn calculate_b(a: &DMatrix<Number>, x_arr: &DVector<Number>) -> DVector<Number> {
+            return a * x_arr;
         }
 
-        fn print_equation(A: &DMatrix<Number>, x: &DVector<Number>, b: &DVector<Number>) {
-            for i in 0..A.nrows() {
-                print!("| ");
-                for j in 0..A.ncols() {
-                    print!("{} ", A[(i, j)]);
-                }
-                print!("| * | {} ", x[i]);
-                print!("= | {} \n", b[i]);
-            }
+        #[allow(unused)]
+        fn print_equation(a: &DMatrix<Number>, x: &DVector<Number>, b: &DVector<Number>) {
+            print!("A:{}", a);
+            println!("*");
+            print!("x:{}", x);
+            println!("=");
+            print!("b:{}", b);
         }
 
+        #[allow(unused)]
         fn base_solve_test(example_matrix: &DMatrix<Number>, example_x: &DVector<Number>) {
             let example_b = calculate_b(&example_matrix, &example_x);
             print_equation(&example_matrix, &example_x, &example_b);
@@ -194,6 +207,7 @@ mod tests {
         }
 
         #[test]
+        #[allow(non_snake_case)]
         fn solve__correct_matrix_1() {
             let example_matrix = DMatrix::<Number>::from_rows(&[
                 RowDVector::from_vec(vec![1., 2., 0., 0., 0.]),
@@ -207,6 +221,7 @@ mod tests {
         }
 
         #[test]
+        #[allow(non_snake_case)]
         fn solve__correct_matrix_2() {
             let example_matrix = DMatrix::<Number>::from_rows(&[
                 RowDVector::from_vec(vec![4., 2., 0., 0.]),
@@ -219,6 +234,7 @@ mod tests {
         }
 
         #[test]
+        #[allow(non_snake_case)]
         fn solve__correct_matrix_3() {
             let example_matrix = DMatrix::<Number>::from_rows(&[
                 RowDVector::from_vec(vec![2., 1., 0., 0., 0.]),
@@ -232,6 +248,7 @@ mod tests {
         }
 
         #[test]
+        #[allow(non_snake_case)]
         fn solve__correct_matrix_4() {
             let example_matrix = DMatrix::<Number>::from_rows(&[
                 RowDVector::from_vec(vec![10., 2., 0.]),
@@ -243,6 +260,7 @@ mod tests {
         }
 
         #[test]
+        #[allow(non_snake_case)]
         fn solve__correct_matrix_5() {
             let example_matrix = DMatrix::<Number>::from_rows(&[
                 RowDVector::from_vec(vec![5., 1., 0.]),
