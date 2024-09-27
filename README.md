@@ -1,5 +1,30 @@
 # Task 1 on Voskoboynikov math - Tridigonal matrix method
+## Description
+The goal of tridiagonal method is to solve equation like `Ax = b`, where `A` is a *tridiagonal matrix*, `b` is a *vector*, and `x` is a desired *solution vector*.
+```
+A:
+  │ 1 2 0 0 0 │
+  │ 2 1 2 0 0 │
+  │ 0 3 1 2 0 │
+  │ 0 0 4 1 2 │
+  │ 0 0 0 1 2 │
 
+*
+x:
+  │ x1 │
+  │ x2 │
+  │ x3 │
+  │ x4 │
+  │ x5 │
+
+=
+b:
+  │  7 │
+  │  9 │
+  │ 21 │
+  │ 21 │
+  │ 13 │
+```
 ## Build & Run
 In rust you dont have to worry about nothing. Just install rust on your computer, go to the folder with project and type
 ```sh
@@ -9,7 +34,10 @@ If you want to see more output - use this:
 ```sh
 cargo test -- --nocapture --color always
 ```
+The second command will print the equations in the terminal.
+
 You will see several examples of equations that are getting solved using tridiagonal matrix method.
+
 The main function is placed in `src/math/solver.rs` with name `solve`
 ```rust
 pub fn solve(a: &DMatrix<Number>, b: &DVector<Number>) -> DVector<Number> {
@@ -31,4 +59,4 @@ pub fn solve(a: &DMatrix<Number>, b: &DVector<Number>) -> DVector<Number> {
 ```
 First we check if the matrix is tridiagonal and square. If not we panic. Then we calculate the v coefficients. Then we calculate the u coefficients. Then we solve the system of equations using the tridiagonal method. You can read about tridiagonal methods in [here](https://dzen.ru/a/YDWWQaMy3XNzjwmJ)
 
-If we go a little deeper in the file - we will find different tests for this and other private functions. You can check commentaries across this file to get more information
+> If we go a little deeper in the file - we will find different tests for this and other private functions. You can check commentaries across this file `src/math/solver.rs` to get more information
