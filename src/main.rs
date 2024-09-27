@@ -1,4 +1,4 @@
-mod solverd;
+mod math;
 
 fn main() {
     println!("Hello, world!");
