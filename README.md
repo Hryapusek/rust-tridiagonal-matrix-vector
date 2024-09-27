@@ -31,4 +31,4 @@ pub fn solve(a: &DMatrix<Number>, b: &DVector<Number>) -> DVector<Number> {
 ```
 First we check if the matrix is tridiagonal and square. If not we panic. Then we calculate the v coefficients. Then we calculate the u coefficients. Then we solve the system of equations using the tridiagonal method. You can read about tridiagonal methods in [here](https://dzen.ru/a/YDWWQaMy3XNzjwmJ)
 
-If we go a little deeper in the file - we will find different tests for this and other private functions.
+If we go a little deeper in the file - we will find different tests for this and other private functions. You can check commentaries across this file to get more information
