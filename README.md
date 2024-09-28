@@ -26,7 +26,7 @@ b:
   │ 13 │
 ```
 ## Build & Run
-In rust you dont have to worry about nothing. Just install rust on your computer, go to the folder with project and type
+In rust you dont have to worry about anything. Just install rust on your computer, go to the folder with project and type
 ```sh
 cargo test -- --color always
 ```
