@@ -1,25 +1,42 @@
 use std::ops::{Add, Div, Sub};
 
-trait Stepping<Number>
-where
-    Number: Div<i32, Output = Number> + std::ops::Sub<Output = Number>,
+pub trait NumberTrait:
+    std::ops::Div<Self, Output = Self>
+    + std::ops::Div<i32, Output = Self>
+    + std::ops::Sub<Output = Self>
+    + std::ops::Add<Output = Self>
+    + std::ops::Mul<Output = Self>
+    + Sized
+    + Copy
+    + std::convert::From<i32>
 {
-    fn steps_count(&self) -> usize;
+}
 
+pub trait Stepping<Number>
+where
+    Number: NumberTrait,
+{
     /// **NOTE:** `i > 0` and `i <= self.steps_count()`
     fn step(&self, i: usize) -> Number;
 
     /// **NOTE:** `i >= 0` and `i <= self.steps_count()`
     fn cross_step(&self, i: usize) -> Number {
-        assert!(i <= self.steps_count());
+        assert!(i < self.points().len());
         if i == 0 {
             self.step(1) / 2
-        } else if i == self.steps_count() {
+        } else if i == self.points().len() - 1 {
             self.step(i) / 2
         } else {
             (self.step(i + 1) - self.step(i)) / 2
         }
     }
+
+    fn points(&self) -> &Vec<Number>;
+
+    fn point(&self, i: usize) -> Number;
+
+    /// Returns the middle point between `i` and `i+1`
+    fn middle_point(&self, i: usize) -> Number;
 }
 
 struct IntervalSplitter<Number> {
@@ -32,9 +49,7 @@ struct IntervalSplitter<Number> {
 
 impl<Number> IntervalSplitter<Number>
 where
-    Number: Div<i32, Output = Number> + Sub<Output = Number>,
-    Number: Copy,
-    Number: Add<Output = Number>,
+    Number: NumberTrait,
 {
     fn new(points: Vec<Number>) -> IntervalSplitter<Number> {
         let mut steps: Vec<Number> = vec![];
@@ -59,6 +74,19 @@ where
             cross_steps,
         }
     }
+}
+
+impl<Number> Stepping<Number> for IntervalSplitter<Number>
+where
+    Number: NumberTrait,
+{
+    fn step(&self, i: usize) -> Number {
+        self.steps[i - 1]
+    }
+
+    fn cross_step(&self, i: usize) -> Number {
+        self.cross_steps[i - 1]
+    }
 
     fn points(&self) -> &Vec<Number> {
         &self.points
@@ -67,21 +95,9 @@ where
     fn point(&self, i: usize) -> Number {
         self.points[i]
     }
-}
 
-impl<Number> Stepping<Number> for IntervalSplitter<Number>
-where
-    Number: Div<i32, Output = Number> + std::ops::Sub<Output = Number> + Copy,
-{
-    fn steps_count(&self) -> usize {
-        self.points.len() - 1
-    }
-
-    fn step(&self, i: usize) -> Number {
-        self.steps[i - 1]
-    }
-
-    fn cross_step(&self, i: usize) -> Number {
-        self.cross_steps[i - 1]
+    fn middle_point(&self, i: usize) -> Number {
+        assert!(i < self.points.len() - 1);
+        (self.points[i] + self.steps[i + 1]) / 2
     }
 }
