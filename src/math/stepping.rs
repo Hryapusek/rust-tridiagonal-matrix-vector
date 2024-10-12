@@ -1,8 +1,5 @@
-use std::ops::{Add, Div, Sub};
-
 pub trait NumberTrait:
     std::ops::Div<Self, Output = Self>
-    + std::ops::Div<i32, Output = Self>
     + std::ops::Sub<Output = Self>
     + std::ops::Add<Output = Self>
     + std::ops::Mul<Output = Self>
@@ -11,6 +8,9 @@ pub trait NumberTrait:
     + std::convert::From<i32>
 {
 }
+
+impl NumberTrait for i32 {}
+impl NumberTrait for f64 {}
 
 pub trait Stepping<Number>
 where
@@ -23,11 +23,11 @@ where
     fn cross_step(&self, i: usize) -> Number {
         assert!(i < self.points().len());
         if i == 0 {
-            self.step(1) / 2
+            self.step(1) / Number::from(2)
         } else if i == self.points().len() - 1 {
-            self.step(i) / 2
+            self.step(i) / Number::from(2)
         } else {
-            (self.step(i + 1) - self.step(i)) / 2
+            (self.step(i + 1) - self.step(i)) / Number::from(2)
         }
     }
 
@@ -39,7 +39,7 @@ where
     fn middle_point(&self, i: usize) -> Number;
 }
 
-struct IntervalSplitter<Number> {
+pub struct IntervalSplitter<Number> {
     points: Vec<Number>,
     /// points.size() - 1
     steps: Vec<Number>,
@@ -51,7 +51,7 @@ impl<Number> IntervalSplitter<Number>
 where
     Number: NumberTrait,
 {
-    fn new(points: Vec<Number>) -> IntervalSplitter<Number> {
+    pub fn new(points: Vec<Number>) -> IntervalSplitter<Number> {
         let mut steps: Vec<Number> = vec![];
         for i in 1..points.len() {
             steps.push(points[i] - points[i - 1]);
@@ -60,11 +60,11 @@ where
         let mut cross_steps: Vec<Number> = vec![];
         for i in 0..points.len() {
             if i == 0 {
-                cross_steps.push(steps[i] / 2);
+                cross_steps.push(steps[i] / Number::from(2));
             } else if i == points.len() - 1 {
-                cross_steps.push(steps[i - 1] / 2);
+                cross_steps.push(steps[i - 1] / Number::from(2));
             } else {
-                cross_steps.push((steps[i - 1] + steps[i]) / 2);
+                cross_steps.push((steps[i - 1] + steps[i]) / Number::from(2));
             }
         }
 
@@ -98,6 +98,6 @@ where
 
     fn middle_point(&self, i: usize) -> Number {
         assert!(i < self.points.len() - 1);
-        (self.points[i] + self.steps[i + 1]) / 2
+        (self.points[i] + self.points[i + 1]) / Number::from(2)
     }
 }

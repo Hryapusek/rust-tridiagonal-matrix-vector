@@ -1,31 +1,48 @@
-trait CoeffCalculator<Number> {
+pub trait CoeffCalculator<Number> {
     fn calc_a(&self, i: usize) -> Number;
     fn calc_b(&self, i: usize) -> Number;
     fn calc_c(&self, i: usize) -> Number;
     fn calc_g(&self, i: usize) -> Number;
+    fn size(&self) -> usize;
 }
 
-trait Function<Number> {
+pub struct LambdaFunction<Number, Func: Fn(Number) -> Number> {
+    ffunc: Func,
+    phatnom: std::marker::PhantomData<Number>,
+}
+
+impl<Number, Func: Fn(Number) -> Number> Function<Number> for LambdaFunction<Number, Func> {
+    fn calc(&self, x: Number) -> Number {
+        (self.ffunc)(x)
+    }
+}
+
+impl<Number, Func: Fn(Number) -> Number> std::convert::From<Func> for LambdaFunction<Number, Func> {
+    fn from(ffunc: Func) -> Self {
+        LambdaFunction {
+            ffunc,
+            phatnom: std::marker::PhantomData,
+        }
+    }
+}
+
+pub trait Function<Number> {
     fn calc(&self, x: Number) -> Number;
 }
 
-trait KFunction<Number>: Function<Number> {}
-
-trait QFunction<Number>: Function<Number> {}
-
 /// This module will contain calculator that works
 /// when we have **1st condition** at the left and **3rd condition** at the right
-mod first_third_calculator {
+pub mod first_third_calculator {
     use std::marker::PhantomData;
 
-    use super::{KFunction, QFunction, Function};
+    use super::Function;
     use crate::math::coeff_calculator::CoeffCalculator;
     use crate::math::stepping::{NumberTrait, Stepping};
 
-    struct FirstThirdCalculator<
+    pub struct FirstThirdCalculator<
         SteppingObject: Stepping<Number>,
-        KFunctionType: KFunction<Number>,
-        QFunctionType: QFunction<Number>,
+        KFunctionType: Function<Number>,
+        QFunctionType: Function<Number>,
         FunctionType: Function<Number>,
         Number: NumberTrait,
     > {
@@ -36,18 +53,17 @@ mod first_third_calculator {
         y1: Number,
         hi2: Number,
         y2: Number,
-        phatnom: PhantomData<Number>,
     }
 
     impl<
             SteppingObject: Stepping<Number>,
-            KFunctionType: KFunction<Number>,
-            QFunctionType: QFunction<Number>,
+            KFunctionType: Function<Number>,
+            QFunctionType: Function<Number>,
             FunctionType: Function<Number>,
             Number: NumberTrait,
         > FirstThirdCalculator<SteppingObject, KFunctionType, QFunctionType, FunctionType, Number>
     {
-        fn new(
+        pub fn new(
             stepping: SteppingObject,
             kfunc: KFunctionType,
             qfunc: QFunctionType,
@@ -55,7 +71,8 @@ mod first_third_calculator {
             y1: Number,
             hi2: Number,
             y2: Number,
-        ) -> FirstThirdCalculator<SteppingObject, KFunctionType, QFunctionType, FunctionType, Number> {
+        ) -> FirstThirdCalculator<SteppingObject, KFunctionType, QFunctionType, FunctionType, Number>
+        {
             FirstThirdCalculator {
                 stepping,
                 kfunc,
@@ -64,15 +81,14 @@ mod first_third_calculator {
                 y1,
                 hi2,
                 y2,
-                phatnom: PhantomData,
             }
         }
     }
 
     impl<
             SteppingObject: Stepping<Number>,
-            KFunctionType: KFunction<Number>,
-            QFunctionType: QFunction<Number>,
+            KFunctionType: Function<Number>,
+            QFunctionType: Function<Number>,
             FunctionType: Function<Number>,
             Number: NumberTrait,
         > CoeffCalculator<Number>
@@ -102,7 +118,7 @@ mod first_third_calculator {
 
         fn calc_c(&self, i: usize) -> Number {
             if i == 0 {
-                Number::from(0)
+                Number::from(1)
             } else if i < self.stepping.points().len() - 1 {
                 self.kfunc.calc(self.stepping.middle_point(i - 1)) / self.stepping.step(i)
                     + self.kfunc.calc(self.stepping.middle_point(i)) / self.stepping.step(i + 1)
@@ -127,5 +143,47 @@ mod first_third_calculator {
                 panic!("i >= self.stepping.points().len()")
             }
         }
+
+        fn size(&self) -> usize {
+            self.stepping.points().len()
+        }
     }
 }
+
+pub mod matrix_building {
+    use crate::CoeffCalculator;
+    use nalgebra::{DMatrix, DVector};
+
+    /// Builds the tridiagonal matrix and the right-hand side vector
+    /// using the provided coefficient calculator.
+    pub fn build_tridiagonal_matrix<Number, Calculator>(
+        calculator: &Calculator,
+    ) -> (DMatrix<Number>, DVector<Number>)
+    where
+        Number: nalgebra::RealField, // Ensures we can work with nalgebra numbers
+        Calculator: CoeffCalculator<Number>,
+    {
+        let n = calculator.size();
+        // Create an NxN matrix initialized to zeros
+        let mut matrix = DMatrix::zeros(n, n);
+        // Create a vector for the right-hand side of the equation
+        let mut rhs_vector = DVector::zeros(n);
+
+        // Fill the matrix with values from the coefficient calculator
+        for i in 0..n {
+            if i > 0 {
+                matrix[(i, i - 1)] = calculator.calc_a(i); // Sub-diagonal (below the main diagonal)
+            }
+            matrix[(i, i)] = calculator.calc_c(i); // Main diagonal
+            if i < n - 1 {
+                matrix[(i, i + 1)] = calculator.calc_b(i); // Super-diagonal (above the main diagonal)
+            }
+
+            // Fill the right-hand side vector (the g vector)
+            rhs_vector[i] = calculator.calc_g(i);
+        }
+
+        (matrix, rhs_vector)
+    }
+}
+
