@@ -51,7 +51,6 @@ pub mod first_third_calculator {
         qfunc: QFunctionType,
         ffunc: FunctionType,
         y1: Number,
-        hi2: Number,
         y2: Number,
         n: u16,
     }
@@ -70,7 +69,6 @@ pub mod first_third_calculator {
             qfunc: QFunctionType,
             ffunc: FunctionType,
             y1: Number,
-            hi2: Number,
             y2: Number,
             n: u16,
         ) -> FirstThirdCalculator<SteppingObject, KFunctionType, QFunctionType, FunctionType, Number>
@@ -81,7 +79,6 @@ pub mod first_third_calculator {
                 qfunc,
                 ffunc,
                 y1,
-                hi2,
                 y2,
                 n,
             }
@@ -102,8 +99,8 @@ pub mod first_third_calculator {
                 panic!("i == 0")
             } else if i < self.stepping.points().len() {
                 Number::from(-1)
-                    * self.stepping.point(i - 1).pow(self.n)
-                    * self.kfunc.calc(self.stepping.point(i - 1))
+                    * self.stepping.middle_point(i - 1).pow(self.n)
+                    * self.kfunc.calc(self.stepping.middle_point(i - 1))
                     / self.stepping.step(i)
             } else {
                 panic!("i > self.stepping.steps_count()")
@@ -150,7 +147,6 @@ pub mod first_third_calculator {
                     + self.stepping.cross_step(i)
                         * self.stepping.middle_point(i-1).pow(self.n)
                         * self.qfunc.calc(self.stepping.point(i))
-                    + self.stepping.middle_point(i-1).pow(self.n) * self.hi2
             } else {
                 panic!("i > self.stepping.points().len()")
             }
@@ -167,7 +163,7 @@ pub mod first_third_calculator {
                 self.stepping.cross_step(i)
                     * self.stepping.point(i).pow(self.n)
                     * self.ffunc.calc(self.stepping.point(i))
-                    + self.stepping.point(i).pow(self.n) * self.hi2
+                    + self.stepping.point(i).pow(self.n) * self.y2
             } else {
                 panic!("i >= self.stepping.points().len()")
             }
