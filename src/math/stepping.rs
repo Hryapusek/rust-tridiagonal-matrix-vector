@@ -3,9 +3,11 @@ pub trait NumberTrait:
     + std::ops::Sub<Output = Self>
     + std::ops::Add<Output = Self>
     + std::ops::Mul<Output = Self>
+    + num_traits::Pow<u16, Output = Self>
     + Sized
     + Copy
     + std::convert::From<i32>
+    + std::convert::From<u16>
 {
 }
 
@@ -85,7 +87,7 @@ where
     }
 
     fn cross_step(&self, i: usize) -> Number {
-        self.cross_steps[i - 1]
+        self.cross_steps[i]
     }
 
     fn points(&self) -> &Vec<Number> {
