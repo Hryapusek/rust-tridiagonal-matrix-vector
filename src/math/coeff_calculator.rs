@@ -109,11 +109,10 @@ pub mod first_third_calculator {
 
         fn calc_b(&self, i: usize) -> Number {
             if i == 0 {
-                self.stepping.middle_point(i).pow(self.n)
-                    * self.kfunc.calc(self.stepping.middle_point(i))
-                    / self.stepping.step(i + 1)
+                Number::from(0)
             } else if i < self.stepping.points().len() - 1 {
-                self.stepping.middle_point(i).pow(self.n)
+                Number::from(-1)
+                    * self.stepping.middle_point(i).pow(self.n)
                     * self.kfunc.calc(self.stepping.middle_point(i))
                     / self.stepping.step(i + 1)
             } else {
@@ -123,13 +122,7 @@ pub mod first_third_calculator {
 
         fn calc_c(&self, i: usize) -> Number {
             if i == 0 {
-                self.stepping.middle_point(i).pow(self.n)
-                    * self.kfunc.calc(self.stepping.middle_point(i))
-                    / self.stepping.step(i + 1)
-                    + Number::from(1) / Number::from(self.n + 1)
-                        * self.stepping.cross_step(i)
-                        * self.stepping.middle_point(i).pow(self.n)
-                        * self.qfunc.calc(self.stepping.point(i))
+                Number::from(1)
             } else if i < self.stepping.points().len() - 1 {
                 self.stepping.middle_point(i - 1).pow(self.n)
                     * self.kfunc.calc(self.stepping.middle_point(i - 1))
@@ -138,15 +131,10 @@ pub mod first_third_calculator {
                         * self.kfunc.calc(self.stepping.middle_point(i))
                         / self.stepping.step(i + 1)
                     + self.stepping.cross_step(i)
-                        * self.stepping.middle_point(i).pow(self.n)
+                        * self.stepping.point(i).pow(self.n)
                         * self.qfunc.calc(self.stepping.point(i))
             } else if i == self.stepping.points().len() - 1 {
-                self.stepping.middle_point(i - 1).pow(self.n)
-                    * self.kfunc.calc(self.stepping.middle_point(i - 1))
-                    / self.stepping.step(i)
-                    + self.stepping.cross_step(i)
-                        * self.stepping.middle_point(i-1).pow(self.n)
-                        * self.qfunc.calc(self.stepping.point(i))
+                Number::from(1)
             } else {
                 panic!("i > self.stepping.points().len()")
             }
@@ -160,10 +148,7 @@ pub mod first_third_calculator {
                     * self.stepping.point(i).pow(self.n)
                     * self.ffunc.calc(self.stepping.point(i))
             } else if i == self.stepping.points().len() - 1 {
-                self.stepping.cross_step(i)
-                    * self.stepping.point(i).pow(self.n)
-                    * self.ffunc.calc(self.stepping.point(i))
-                    + self.stepping.point(i).pow(self.n) * self.y2
+                self.y2
             } else {
                 panic!("i >= self.stepping.points().len()")
             }
