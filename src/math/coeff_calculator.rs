@@ -114,7 +114,8 @@ pub mod first_third_calculator {
             if i == 0 {
                 Number::from(0)
             } else if i < self.stepping.points().len() - 1 {
-                self.stepping.middle_point(i).pow(self.n)
+                Number::from(-1)
+                    * self.stepping.middle_point(i).pow(self.n)
                     * self.kfunc.calc(self.stepping.middle_point(i))
                     / self.stepping.step(i + 1)
             } else {
@@ -133,23 +134,22 @@ pub mod first_third_calculator {
                         * self.kfunc.calc(self.stepping.middle_point(i))
                         / self.stepping.step(i + 1)
                     + self.stepping.cross_step(i)
-                        * self.stepping.middle_point(i).pow(self.n)
+                        * self.stepping.point(i).pow(self.n)
                         * self.qfunc.calc(self.stepping.point(i))
             } else if i == self.stepping.points().len() - 1 {
                 // Contribution from the left neighbor (i-1)
                 let a_term = self.stepping.middle_point(i - 1).pow(self.n)
                     * self.kfunc.calc(self.stepping.middle_point(i - 1))
                     / self.stepping.step(i);
-                
+
                 // Source term at the boundary (if any)
                 let q_term = self.stepping.cross_step(i)
-                    * self.stepping.middle_point(i - 1).pow(self.n)
+                    * self.stepping.point(i).pow(self.n)
                     * self.qfunc.calc(self.stepping.point(i));
-            
+
                 // Robin boundary condition
-                let boundary_term = self.stepping.middle_point(i - 1).pow(self.n)
-                    * (self.hi2 + self.y2);  // hi2 represents the coefficient in the boundary condition, and y2 the outer temperature or flux
-            
+                let boundary_term = self.stepping.point(i).pow(self.n) * self.hi2;
+
                 // Return the sum of all terms
                 a_term + q_term + boundary_term
             } else {
@@ -168,7 +168,7 @@ pub mod first_third_calculator {
                 self.stepping.cross_step(i)
                     * self.stepping.point(i).pow(self.n)
                     * self.ffunc.calc(self.stepping.point(i))
-                    + self.stepping.point(i).pow(self.n) * self.hi2
+                    + self.stepping.point(i).pow(self.n) * self.y2
             } else {
                 panic!("i >= self.stepping.points().len()")
             }

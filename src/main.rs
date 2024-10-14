@@ -5,19 +5,19 @@ use math::stepping::IntervalSplitter;
 
 fn main() {
     // Set radial points (ranging from 0 to 1, simulating the radius of the cylinder)
-    let points = (1..=10).map(|i| (i as f64) / 10.0).collect::<Vec<f64>>();
+    let points = (1..=11).map(|i| (i as f64)).collect::<Vec<f64>>();
 
     let splitter = IntervalSplitter::new(points);
 
     // k(r) = 1, q(r) = 0, f(r) = 0 for a simple cylindrical heat conduction case
-    let kfunc = LambdaFunction::from(|_r| 1.0);
-    let qfunc = LambdaFunction::from(|_r| 0.0);
-    let ffunc = LambdaFunction::from(|_r| 1.0);
+    let kfunc = LambdaFunction::from(|_r| 2.0);
+    let qfunc = LambdaFunction::from(|_r| 3.0);
+    let ffunc = LambdaFunction::from(|r| -4.0 / r + 54.0 + 6.0 * r);
 
     // Boundary conditions: T(0) = 0 (center), T(1) = 1 (outer radius)
-    let y1 = 0.0;
-    let hi2 = 0.0;
-    let y2 = 1.0;
+    let y1 = 20.0;
+    let hi2 = 5.0;
+    let y2 = 204.0;
 
     // The 'n' value for cylindrical symmetry (n=1 for 2D axisymmetric cylindrical case)
     let n = 1;
