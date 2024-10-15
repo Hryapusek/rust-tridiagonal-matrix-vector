@@ -51,7 +51,6 @@ pub mod first_third_calculator {
         qfunc: QFunctionType,
         ffunc: FunctionType,
         y1: Number,
-        hi2: Number,
         y2: Number,
         n: u16,
     }
@@ -70,7 +69,6 @@ pub mod first_third_calculator {
             qfunc: QFunctionType,
             ffunc: FunctionType,
             y1: Number,
-            hi2: Number,
             y2: Number,
             n: u16,
         ) -> FirstThirdCalculator<SteppingObject, KFunctionType, QFunctionType, FunctionType, Number>
@@ -81,7 +79,6 @@ pub mod first_third_calculator {
                 qfunc,
                 ffunc,
                 y1,
-                hi2,
                 y2,
                 n,
             }
@@ -147,11 +144,8 @@ pub mod first_third_calculator {
                     * self.stepping.point(i).pow(self.n)
                     * self.qfunc.calc(self.stepping.point(i));
 
-                // Robin boundary condition
-                let boundary_term = self.stepping.point(i).pow(self.n) * self.hi2;
-
                 // Return the sum of all terms
-                a_term + q_term + boundary_term
+                a_term + q_term
             } else {
                 panic!("i > self.stepping.points().len()")
             }

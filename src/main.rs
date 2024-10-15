@@ -16,7 +16,6 @@ fn main() {
 
     // Boundary conditions: T(0) = 0 (center), T(1) = 1 (outer radius)
     let y1 = 20.0;
-    let hi2 = 5.0;
     let y2 = 204.0;
 
     // The 'n' value for cylindrical symmetry (n=1 for 2D axisymmetric cylindrical case)
@@ -29,7 +28,6 @@ fn main() {
             qfunc,
             ffunc,
             y1,
-            hi2,
             y2,
             n,
         );
