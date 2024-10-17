@@ -39,7 +39,7 @@ pub mod first_third_calculator {
     use crate::math::coeff_calculator::CoeffCalculator;
     use crate::math::stepping::{NumberTrait, Stepping};
 
-    pub struct FirstThirdCalculator<
+    pub struct FirstThirdCalculator<'a, 
         SteppingObject: Stepping<Number>,
         KFunctionType: Function<Number>,
         QFunctionType: Function<Number>,
@@ -47,33 +47,34 @@ pub mod first_third_calculator {
         Number: NumberTrait,
     > {
         stepping: SteppingObject,
-        kfunc: KFunctionType,
-        qfunc: QFunctionType,
-        ffunc: FunctionType,
+        kfunc: &'a KFunctionType,
+        qfunc: &'a QFunctionType,
+        ffunc: &'a FunctionType,
         y1: Number,
         hi2: Number,
         y2: Number,
         n: u16,
     }
 
-    impl<
+    impl<   
+            'a,
             SteppingObject: Stepping<Number>,
             KFunctionType: Function<Number>,
             QFunctionType: Function<Number>,
             FunctionType: Function<Number>,
             Number: NumberTrait,
-        > FirstThirdCalculator<SteppingObject, KFunctionType, QFunctionType, FunctionType, Number>
+        > FirstThirdCalculator<'a, SteppingObject, KFunctionType, QFunctionType, FunctionType, Number>
     {
         pub fn new(
             stepping: SteppingObject,
-            kfunc: KFunctionType,
-            qfunc: QFunctionType,
-            ffunc: FunctionType,
+            kfunc: &'a KFunctionType,
+            qfunc: &'a QFunctionType,
+            ffunc: &'a FunctionType,
             y1: Number,
             hi2: Number,
             y2: Number,
             n: u16,
-        ) -> FirstThirdCalculator<SteppingObject, KFunctionType, QFunctionType, FunctionType, Number>
+        ) -> FirstThirdCalculator<'a, SteppingObject, KFunctionType, QFunctionType, FunctionType, Number>
         {
             FirstThirdCalculator {
                 stepping,
@@ -89,13 +90,14 @@ pub mod first_third_calculator {
     }
 
     impl<
+            'a,
             SteppingObject: Stepping<Number>,
             KFunctionType: Function<Number>,
             QFunctionType: Function<Number>,
             FunctionType: Function<Number>,
             Number: NumberTrait,
         > CoeffCalculator<Number>
-        for FirstThirdCalculator<SteppingObject, KFunctionType, QFunctionType, FunctionType, Number>
+        for FirstThirdCalculator<'a, SteppingObject, KFunctionType, QFunctionType, FunctionType, Number>
     {
         fn calc_a(&self, i: usize) -> Number {
             if i == 0 {
