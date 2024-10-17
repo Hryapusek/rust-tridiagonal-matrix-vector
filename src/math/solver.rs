@@ -21,6 +21,12 @@ fn check_if_three_diagonals(a: &DMatrix<Number>) -> () {
             if !(row.abs_diff(col) <= 1) && (a[(row, col)] != 0.0) {
                 panic!("Matrix is not diagonally dominant");
             }
+            if row > 0 && row < a.nrows() - 1 && row == col && (a[(row-1, col)] + a[(row+1, col)] > a[(row, col)]) {
+                panic!("Matrix is not diagonally dominant");
+            }
+            if row == 0 && row < a.nrows() - 1 && row == col && (a[(row+1, col)] > a[(row, col)]) {
+                panic!("Matrix is not diagonally dominant");
+            }
         }
     }
 }
@@ -111,11 +117,11 @@ mod tests {
     #[allow(non_snake_case)]
     fn check_if_three_diagonals__correct_matrix() {
         let example_matrix = DMatrix::<Number>::from_rows(&[
-            RowDVector::from_vec(vec![1., 2., 0., 0., 0.]),
-            RowDVector::from_vec(vec![2., 1., 2., 0., 0.]),
-            RowDVector::from_vec(vec![0., 0., 1., 2., 0.]),
-            RowDVector::from_vec(vec![0., 0., 0., 1., 2.]),
-            RowDVector::from_vec(vec![0., 0., 0., 1., 2.]),
+            RowDVector::from_vec(vec![5., 1., 0., 0., 0.]),
+            RowDVector::from_vec(vec![1., 5., 1., 0., 0.]),
+            RowDVector::from_vec(vec![0., 1., 5., 1., 0.]),
+            RowDVector::from_vec(vec![0., 0., 1., 5., 1.]),
+            RowDVector::from_vec(vec![0., 0., 0., 1., 5.]),
         ]);
         check_if_three_diagonals(&example_matrix);
     }
@@ -168,24 +174,11 @@ mod tests {
     #[allow(non_snake_case)]
     fn check_if_three_diagonals__correct_matrix_2() {
         let example_matrix = DMatrix::<Number>::from_rows(&[
-            RowDVector::from_vec(vec![1., 2., 0., 0., 0.]),
-            RowDVector::from_vec(vec![0., 1., 2., 0., 0.]),
-            RowDVector::from_vec(vec![0., 0., 1., 2., 0.]),
-            RowDVector::from_vec(vec![0., 0., 1., 1., 2.]),
-            RowDVector::from_vec(vec![0., 0., 0., 1., 2.]),
-        ]);
-        check_if_three_diagonals(&example_matrix);
-    }
-
-    #[test]
-    #[allow(non_snake_case)]
-    fn check_if_three_diagonals__correct_matrix_3() {
-        let example_matrix = DMatrix::<Number>::from_rows(&[
-            RowDVector::from_vec(vec![1., 2., 0., 0., 0.]),
-            RowDVector::from_vec(vec![3., 1., 2., 0., 0.]),
-            RowDVector::from_vec(vec![0., 4., 1., 2., 0.]),
-            RowDVector::from_vec(vec![0., 0., 1., 1., 2.]),
-            RowDVector::from_vec(vec![0., 0., 0., 1., 2.]),
+            RowDVector::from_vec(vec![4., 1., 0., 0., 0.]),
+            RowDVector::from_vec(vec![2., 4., 1., 0., 0.]),
+            RowDVector::from_vec(vec![0., 2., 4., 1., 0.]),
+            RowDVector::from_vec(vec![0., 0., 2., 4., 1.]),
+            RowDVector::from_vec(vec![0., 0., 0., 2., 4.]),
         ]);
         check_if_three_diagonals(&example_matrix);
     }
@@ -195,7 +188,7 @@ mod tests {
     #[allow(non_snake_case)]
     fn check_if_three_diagonals__incorrect_matrix_4() {
         let example_matrix = DMatrix::<Number>::from_rows(&[
-            RowDVector::from_vec(vec![1., 2., 0., 0., -1.]),
+            RowDVector::from_vec(vec![6., 2., 0., 0., -1.]),
             RowDVector::from_vec(vec![3., 1., 2., 0., 0.]),
             RowDVector::from_vec(vec![0., 1., 2., 0., 0.]),
             RowDVector::from_vec(vec![0., 0., 1., 2., 0.]),
@@ -241,11 +234,11 @@ mod tests {
         #[allow(non_snake_case)]
         fn solve__correct_matrix_1() {
             let a = DMatrix::<Number>::from_rows(&[
-                RowDVector::from_vec(vec![1., 2., 0., 0., 0.]),
-                RowDVector::from_vec(vec![2., 1., 2., 0., 0.]),
-                RowDVector::from_vec(vec![0., 3., 1., 2., 0.]),
-                RowDVector::from_vec(vec![0., 0., 4., 1., 2.]),
-                RowDVector::from_vec(vec![0., 0., 0., 1., 2.]),
+                RowDVector::from_vec(vec![5., 1., 0., 0., 0.]),
+                RowDVector::from_vec(vec![1., 5., 1., 0., 0.]),
+                RowDVector::from_vec(vec![0., 1., 5., 1., 0.]),
+                RowDVector::from_vec(vec![0., 0., 1., 5., 1.]),
+                RowDVector::from_vec(vec![0., 0., 0., 1., 5.]),
             ]);
             let example_x = DVector::<Number>::from_vec(vec![1., 3., 2., 5., 4.]);
             base_solve_test(&a, &example_x);
@@ -257,7 +250,7 @@ mod tests {
             let a = DMatrix::<Number>::from_rows(&[
                 RowDVector::from_vec(vec![4., 2., 0., 0.]),
                 RowDVector::from_vec(vec![1., 3., 1., 0.]),
-                RowDVector::from_vec(vec![0., 1., 3., 2.]),
+                RowDVector::from_vec(vec![0., 1., 4., 2.]),
                 RowDVector::from_vec(vec![0., 0., 1., 4.]),
             ]);
             let example_x = DVector::<Number>::from_vec(vec![1., 2., 3., 4.]);
@@ -268,7 +261,7 @@ mod tests {
         #[allow(non_snake_case)]
         fn solve__correct_matrix_3() {
             let a = DMatrix::<Number>::from_rows(&[
-                RowDVector::from_vec(vec![2., 1., 0., 0., 0.]),
+                RowDVector::from_vec(vec![3., 1., 0., 0., 0.]),
                 RowDVector::from_vec(vec![1., 3., 1., 0., 0.]),
                 RowDVector::from_vec(vec![0., 1., 3., 1., 0.]),
                 RowDVector::from_vec(vec![0., 0., 1., 4., 1.]),
@@ -294,7 +287,7 @@ mod tests {
         #[allow(non_snake_case)]
         fn solve__correct_matrix_5() {
             let a = DMatrix::<Number>::from_rows(&[
-                RowDVector::from_vec(vec![5., 1., 0.]),
+                RowDVector::from_vec(vec![6., 1., 0.]),
                 RowDVector::from_vec(vec![1., 6., 2.]),
                 RowDVector::from_vec(vec![0., 2., 5.]),
             ]);
@@ -319,7 +312,7 @@ mod tests {
                 let mut matrix = DMatrix::<Number>::zeros(n, n);
                 for i in 0..n {
                     // Diagonal element
-                    matrix[(i, i)] = rng.gen_range(1.0..10.0);
+                    matrix[(i, i)] = rng.gen_range(2.1..10.0);
 
                     // Subdiagonal element (if applicable)
                     if i > 0 {
