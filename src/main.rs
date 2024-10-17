@@ -68,7 +68,7 @@ fn exercise_accuracy() {
         sum_inaccuracy_vec.push(sum_inaccuracy);
 
         max_inaccuracy_vec.push(accuracy.iter().fold(0.0, |max, x| x.abs().max(max)));
-        
+
         let first_half_inaccuracy: f64 = accuracy
             .iter()
             .take(accuracy.len() / 2)
@@ -90,12 +90,12 @@ fn exercise_accuracy() {
         "max inaccuracy",
         "first half inaccuracy",
         "second half inaccuracy",
-        width = digits_after_dot + 8
+        width = digits_after_dot + 6
     );
     println!("{}", "-".repeat(144));
     for i in 0..step_count_vec.len() {
         println!(
-            "| {:>5} | {:width$.width$} | {:width$.width$} | {:width$.width$} | {:width$.width$} |",
+            "| {:>5} | {:width$e} | {:width$e} | {:width$e} | {:width$e} |",
             step_count_vec[i],
             sum_inaccuracy_vec[i],
             max_inaccuracy_vec[i],
