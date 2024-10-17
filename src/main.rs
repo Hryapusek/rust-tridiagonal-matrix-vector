@@ -82,7 +82,7 @@ fn exercise_accuracy() {
         inaccuracy_in_second_half_vec.push(second_half_inaccuracy);
     }
     let digits_after_dot = 16;
-    println!("{}", "-".repeat(144));
+    println!("{}", "-".repeat(109));
     println!(
         "| {:>5} | {:width$.width$} | {:width$.width$} | {:width$.width$} | {:width$.width$} |",
         "steps",
@@ -92,7 +92,7 @@ fn exercise_accuracy() {
         "second half inaccuracy",
         width = digits_after_dot + 6
     );
-    println!("{}", "-".repeat(144));
+    println!("{}", "-".repeat(109));
     for i in 0..step_count_vec.len() {
         println!(
             "| {:>5} | {:width$e} | {:width$e} | {:width$e} | {:width$e} |",
@@ -104,7 +104,7 @@ fn exercise_accuracy() {
             width = digits_after_dot + 6
         );
     }
-    println!("{}", "-".repeat(144));
+    println!("{}", "-".repeat(109));
     
 
 }
