@@ -1,24 +1,4 @@
-/target
-# Ignore Cargo build directory
-/target/
-
-# Ignore Cargo.lock
-Cargo.lock
-
-# Ignore local configuration
-*.toml
-
-# Ignore profiling files
-*.prof
-
-# Ignore clippy files
-.clippy.toml
-
-# Ignore IDE files
-*.iml
-*.ipynb
-*.sublime-project
-*.sublime-workspaceuse std::ops::Index;
+use std::ops::Index;
 use std::ops::IndexMut;
 
 struct TridiagonalSparseMatrix<NumberType> {
@@ -61,28 +41,3 @@ impl<'a, NumberType> IndexMut<(usize, usize)> for TridiagonalSparseMatrix<Number
         }
     }
 }
-
-
-# Ignore OS files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Ignore temporary files
-*.swp
-*.swo
-*.zip
-*.tar.gz
-*.tar.bz2
-*.tar.xz
-
-# Ignore vim files
-*.swp
-*.swo
-*.vim
-
-*~*
