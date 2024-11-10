@@ -97,11 +97,13 @@ pub mod first_third_calculator {
         fn calc_a(&self, i: usize) -> Number {
             if i == 0 {
                 panic!("i == 0")
-            } else if i < self.stepping.points().len() {
+            } else if i < self.stepping.points().len() - 1 {
                 Number::from(-1)
                     * self.stepping.middle_point(i - 1).pow(self.n)
                     * self.kfunc.calc(self.stepping.middle_point(i - 1))
                     / self.stepping.step(i)
+            } else if i == self.stepping.points().len() - 1 {
+                Number::from(0)
             } else {
                 panic!("i > self.stepping.steps_count()")
             }
