@@ -34,7 +34,7 @@ fn exercise_accuracy_base_example() {
     let original_function = |r: f64| y1 + (r-1.0) * 2.0;
 
     let mut step_count_vec = Vec::<i32>::new();
-    let mut sum_inaccuracy_vec = Vec::<f64>::new();
+    let mut avg_inaccuracy_vec = Vec::<f64>::new();
     let mut max_inaccuracy_vec = Vec::<f64>::new();
     let mut inaccuracy_in_first_half_vec = Vec::<f64>::new();
     let mut inaccuracy_in_second_half_vec = Vec::<f64>::new();
@@ -61,11 +61,11 @@ fn exercise_accuracy_base_example() {
         let calculated_v = solver::solve(&A, &g);
         let expected_v: DVector<f64> = DVector::from_vec(points.iter().map(|x| original_function(*x)).collect());
         let accuracy = &calculated_v - &expected_v;
-        let sum_inaccuracy = accuracy.fold(0.0, |acc, x| acc + x.abs());
+        let avg_inaccuracy = accuracy.fold(0.0, |acc, x| acc + x.abs()) / (accuracy.len() as f64 + 1.0);
 
         step_count_vec.push(*step_count);
 
-        sum_inaccuracy_vec.push(sum_inaccuracy);
+        avg_inaccuracy_vec.push(avg_inaccuracy);
 
         max_inaccuracy_vec.push(accuracy.iter().fold(0.0, |max, x| x.abs().max(max)));
 
@@ -81,32 +81,36 @@ fn exercise_accuracy_base_example() {
         inaccuracy_in_first_half_vec.push(first_half_inaccuracy);
         inaccuracy_in_second_half_vec.push(second_half_inaccuracy);
     }
+    let mut rel_inaccuracy: Vec<f64> = vec![];
+    for i in 1..avg_inaccuracy_vec.len() {
+        rel_inaccuracy.push(avg_inaccuracy_vec[i-1] / avg_inaccuracy_vec[i]);
+    }
     let digits_after_dot = 16;
-    println!("{}", "-".repeat(109));
+    println!("{}", "-".repeat(136));
     println!(
-        "| {:>5} | {:width$.width$} | {:width$.width$} | {:width$.width$} | {:width$.width$} |",
+        "| {:>5} | {:width$.width$} | {:width$.width$} | {:width$.width$} | {:width$.width$} | {:width$.width$}   |",
         "steps",
-        "sum inaccuracy",
+        "avg inaccuracy",
         "max inaccuracy",
         "first half inaccuracy",
         "second half inaccuracy",
+        "rel inaccuracy",
         width = digits_after_dot + 6
     );
-    println!("{}", "-".repeat(109));
+    println!("{}", "-".repeat(136));
     for i in 0..step_count_vec.len() {
         println!(
-            "| {:>5} | {:width$e} | {:width$e} | {:width$e} | {:width$e} |",
+            "| {:>5} | {:width$e} | {:width$e} | {:width$e} | {:width$e} | {:width$.width$} |",
             step_count_vec[i],
-            sum_inaccuracy_vec[i],
+            avg_inaccuracy_vec[i],
             max_inaccuracy_vec[i],
             inaccuracy_in_first_half_vec[i],
             inaccuracy_in_second_half_vec[i],
+            if i > 0 { rel_inaccuracy[i - 1] } else { 0.0 },
             width = digits_after_dot + 6
         );
     }
-    println!("{}", "-".repeat(109));
-    
-
+    println!("{}", "-".repeat(136));
 }
 
 fn exercise_accuracy_kr_high_accuracy() {
@@ -128,7 +132,7 @@ fn exercise_accuracy_kr_high_accuracy() {
     let original_function = |r: f64| 30.0 * r;
 
     let mut step_count_vec = Vec::<i32>::new();
-    let mut sum_inaccuracy_vec = Vec::<f64>::new();
+    let mut avg_inaccuracy_vec = Vec::<f64>::new();
     let mut max_inaccuracy_vec = Vec::<f64>::new();
     let mut inaccuracy_in_first_half_vec = Vec::<f64>::new();
     let mut inaccuracy_in_second_half_vec = Vec::<f64>::new();
@@ -155,11 +159,11 @@ fn exercise_accuracy_kr_high_accuracy() {
         let calculated_v = solver::solve(&A, &g);
         let expected_v: DVector<f64> = DVector::from_vec(points.iter().map(|x| original_function(*x)).collect());
         let accuracy = &calculated_v - &expected_v;
-        let sum_inaccuracy = accuracy.fold(0.0, |acc, x| acc + x.abs());
+        let avg_inaccuracy = accuracy.fold(0.0, |acc, x| acc + x.abs()) / (accuracy.len() as f64 + 1.0);
 
         step_count_vec.push(*step_count);
 
-        sum_inaccuracy_vec.push(sum_inaccuracy);
+        avg_inaccuracy_vec.push(avg_inaccuracy);
 
         max_inaccuracy_vec.push(accuracy.iter().fold(0.0, |max, x| x.abs().max(max)));
 
@@ -175,32 +179,36 @@ fn exercise_accuracy_kr_high_accuracy() {
         inaccuracy_in_first_half_vec.push(first_half_inaccuracy);
         inaccuracy_in_second_half_vec.push(second_half_inaccuracy);
     }
+    let mut rel_inaccuracy: Vec<f64> = vec![];
+    for i in 1..avg_inaccuracy_vec.len() {
+        rel_inaccuracy.push(avg_inaccuracy_vec[i-1] / avg_inaccuracy_vec[i]);
+    }
     let digits_after_dot = 16;
-    println!("{}", "-".repeat(109));
+    println!("{}", "-".repeat(136));
     println!(
-        "| {:>5} | {:width$.width$} | {:width$.width$} | {:width$.width$} | {:width$.width$} |",
+        "| {:>5} | {:width$.width$} | {:width$.width$} | {:width$.width$} | {:width$.width$} | {:width$.width$}   |",
         "steps",
-        "sum inaccuracy",
+        "avg inaccuracy",
         "max inaccuracy",
         "first half inaccuracy",
         "second half inaccuracy",
+        "rel inaccuracy",
         width = digits_after_dot + 6
     );
-    println!("{}", "-".repeat(109));
+    println!("{}", "-".repeat(136));
     for i in 0..step_count_vec.len() {
         println!(
-            "| {:>5} | {:width$e} | {:width$e} | {:width$e} | {:width$e} |",
+            "| {:>5} | {:width$e} | {:width$e} | {:width$e} | {:width$e} | {:width$.width$} |",
             step_count_vec[i],
-            sum_inaccuracy_vec[i],
+            avg_inaccuracy_vec[i],
             max_inaccuracy_vec[i],
             inaccuracy_in_first_half_vec[i],
             inaccuracy_in_second_half_vec[i],
+            if i > 0 { rel_inaccuracy[i - 1] } else { 0.0 },
             width = digits_after_dot + 6
         );
     }
-    println!("{}", "-".repeat(109));
-    
-
+    println!("{}", "-".repeat(136));
 }
 
 fn exercise_accuracy_kr_no_accuracy() {
@@ -219,10 +227,10 @@ fn exercise_accuracy_kr_no_accuracy() {
 
     // The 'n' value for cylindrical symmetry (n=1 for 2D axisymmetric cylindrical case)
     let n = 1;
-    let original_function = |r: f64| 30.0 * r;
+    let original_function = |r: f64| 30.0 * r * r;
 
     let mut step_count_vec = Vec::<i32>::new();
-    let mut sum_inaccuracy_vec = Vec::<f64>::new();
+    let mut avg_inaccuracy_vec = Vec::<f64>::new();
     let mut max_inaccuracy_vec = Vec::<f64>::new();
     let mut inaccuracy_in_first_half_vec = Vec::<f64>::new();
     let mut inaccuracy_in_second_half_vec = Vec::<f64>::new();
@@ -249,11 +257,11 @@ fn exercise_accuracy_kr_no_accuracy() {
         let calculated_v = solver::solve(&A, &g);
         let expected_v: DVector<f64> = DVector::from_vec(points.iter().map(|x| original_function(*x)).collect());
         let accuracy = &calculated_v - &expected_v;
-        let sum_inaccuracy = accuracy.fold(0.0, |acc, x| acc + x.abs());
+        let avg_inaccuracy = accuracy.fold(0.0, |acc, x| acc + x.abs()) / (accuracy.len() as f64 + 1.0);
 
         step_count_vec.push(*step_count);
 
-        sum_inaccuracy_vec.push(sum_inaccuracy);
+        avg_inaccuracy_vec.push(avg_inaccuracy);
 
         max_inaccuracy_vec.push(accuracy.iter().fold(0.0, |max, x| x.abs().max(max)));
 
@@ -269,37 +277,41 @@ fn exercise_accuracy_kr_no_accuracy() {
         inaccuracy_in_first_half_vec.push(first_half_inaccuracy);
         inaccuracy_in_second_half_vec.push(second_half_inaccuracy);
     }
+    let mut rel_inaccuracy: Vec<f64> = vec![];
+    for i in 1..avg_inaccuracy_vec.len() {
+        rel_inaccuracy.push(avg_inaccuracy_vec[i-1] / avg_inaccuracy_vec[i]);
+    }
     let digits_after_dot = 16;
-    println!("{}", "-".repeat(109));
+    println!("{}", "-".repeat(136));
     println!(
-        "| {:>5} | {:width$.width$} | {:width$.width$} | {:width$.width$} | {:width$.width$} |",
+        "| {:>5} | {:width$.width$} | {:width$.width$} | {:width$.width$} | {:width$.width$} | {:width$.width$}   |",
         "steps",
-        "sum inaccuracy",
+        "avg inaccuracy",
         "max inaccuracy",
         "first half inaccuracy",
         "second half inaccuracy",
+        "rel inaccuracy",
         width = digits_after_dot + 6
     );
-    println!("{}", "-".repeat(109));
+    println!("{}", "-".repeat(136));
     for i in 0..step_count_vec.len() {
         println!(
-            "| {:>5} | {:width$e} | {:width$e} | {:width$e} | {:width$e} |",
+            "| {:>5} | {:width$e} | {:width$e} | {:width$e} | {:width$e} | {:width$.width$} |",
             step_count_vec[i],
-            sum_inaccuracy_vec[i],
+            avg_inaccuracy_vec[i],
             max_inaccuracy_vec[i],
             inaccuracy_in_first_half_vec[i],
             inaccuracy_in_second_half_vec[i],
+            if i > 0 { rel_inaccuracy[i - 1] } else { 0.0 },
             width = digits_after_dot + 6
         );
     }
-    println!("{}", "-".repeat(109));
-    
-
+    println!("{}", "-".repeat(136));
 }
 
 fn main() {
-    // exercise_accuracy_base_example();
+    exercise_accuracy_base_example();
     // exercise_accuracy_kr_high_accuracy();
-    exercise_accuracy_kr_no_accuracy();
+    // exercise_accuracy_kr_no_accuracy();
 }
 
