@@ -13,7 +13,17 @@ add_executable(${EXECUTABLE_NAME})
 target_sources(${EXECUTABLE_NAME}
   PRIVATE
     src/main.cpp
+
+    external/src/contract/src/contract.cpp
 )
+
+target_include_directories(${EXECUTABLE_NAME}
+  PRIVATE
+    include/public
+
+    external/src/contract/include
+)
+
 
 target_link_libraries(${EXECUTABLE_NAME}
   PRIVATE

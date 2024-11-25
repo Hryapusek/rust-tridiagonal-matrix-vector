@@ -43,3 +43,7 @@ Thumbs.db
 *.vim
 
 *~*
+.vscode
+build
+*.vscode*
+*.mp4

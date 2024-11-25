@@ -1,0 +1,6 @@
+[submodule "lab2/external/src/eigen"]
+	path = lab2/external/src/eigen
+	url = https://gitlab.com/libeigen/eigen.git
+[submodule "lab2/external/src/contract"]
+	path = lab2/external/src/contract
+	url = https://github.com/alexeiz/contract.git
