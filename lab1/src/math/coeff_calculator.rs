@@ -139,7 +139,7 @@ pub mod third_second_calculator {
                 Number::from(-1)
                     * self.stepping.middle_point(i).pow(self.n)
                     * self.kfunc.calc(self.stepping.middle_point(i))
-                    / self.stepping.step(i)
+                    / self.stepping.step(i+1)
             } else if i < self.stepping.points().len() - 1 {
                 Number::from(-1)
                     * self.stepping.middle_point(i).pow(self.n)
@@ -156,9 +156,10 @@ pub mod third_second_calculator {
                     * self.kfunc.calc(self.stepping.middle_point(i))
                     / self.stepping.step(i + 1)
                     + Number::from(1) / (Number::from(self.n) + Number::from(1))
-                        * self.stepping.step(i)
+                        * self.stepping.cross_step(i)
                         * self.stepping.middle_point(i).pow(self.n)
                         * self.qfunc.calc(self.stepping.point(i))
+                    + self.hi1 * self.stepping.point(i).pow(self.n)
             } else if i < self.stepping.points().len() - 1 {
                 self.stepping.middle_point(i - 1).pow(self.n)
                     * self.kfunc.calc(self.stepping.middle_point(i - 1))
@@ -188,6 +189,7 @@ pub mod third_second_calculator {
                     * self.stepping.step(i)
                     * self.stepping.middle_point(i).pow(self.n)
                     * self.ffunc.calc(self.stepping.point(i))
+                    + self.y1 * self.stepping.point(i).pow(self.n)
             } else if i < self.stepping.points().len() - 1 {
                 self.stepping.cross_step(i)
                     * self.stepping.point(i).pow(self.n)
