@@ -25,7 +25,7 @@ auto split_interval(const Number_t& left, const Number_t& right, size_t num_inte
   return intervals;
 }
 
-// Calculate the length of an interval
+// Calculate the length of an interval `index-1` to `index`
 auto calc_h(const std::vector<Number_t>& intervals, size_t index) -> Number_t
 {
   contract(fun)
@@ -49,7 +49,7 @@ auto calc_cross_h(const std::vector<Number_t>& intervals, size_t index) -> Numbe
   }
 }
 
-/// @return middle point between index and index - 1
+/// @return middle point between `index` and `index - 1`
 auto middle_point(const std::vector<Number_t>& intervals, size_t index) -> Number_t
 {
   return (intervals.at(index) + intervals.at(index - 1)) / 2;
