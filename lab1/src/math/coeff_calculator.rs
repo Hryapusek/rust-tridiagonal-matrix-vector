@@ -32,14 +32,15 @@ pub trait Function<Number> {
 
 /// This module will contain calculator that works
 /// when we have **1st condition** at the left and **3rd condition** at the right
-pub mod first_third_calculator {
+pub mod third_second_calculator {
     use std::marker::PhantomData;
 
     use super::Function;
     use crate::math::coeff_calculator::CoeffCalculator;
     use crate::math::stepping::{NumberTrait, Stepping};
 
-    pub struct FirstThirdCalculator<'a, 
+    pub struct ThirdSecondCalculator<
+        'a,
         SteppingObject: Stepping<Number>,
         KFunctionType: Function<Number>,
         QFunctionType: Function<Number>,
@@ -51,19 +52,27 @@ pub mod first_third_calculator {
         qfunc: &'a QFunctionType,
         ffunc: &'a FunctionType,
         y1: Number,
-        hi2: Number,
+        hi1: Number,
         y2: Number,
         n: u16,
     }
 
-    impl<   
+    impl<
             'a,
             SteppingObject: Stepping<Number>,
             KFunctionType: Function<Number>,
             QFunctionType: Function<Number>,
             FunctionType: Function<Number>,
             Number: NumberTrait,
-        > FirstThirdCalculator<'a, SteppingObject, KFunctionType, QFunctionType, FunctionType, Number>
+        >
+        ThirdSecondCalculator<
+            'a,
+            SteppingObject,
+            KFunctionType,
+            QFunctionType,
+            FunctionType,
+            Number,
+        >
     {
         pub fn new(
             stepping: SteppingObject,
@@ -71,18 +80,24 @@ pub mod first_third_calculator {
             qfunc: &'a QFunctionType,
             ffunc: &'a FunctionType,
             y1: Number,
-            hi2: Number,
+            hi1: Number,
             y2: Number,
             n: u16,
-        ) -> FirstThirdCalculator<'a, SteppingObject, KFunctionType, QFunctionType, FunctionType, Number>
-        {
-            FirstThirdCalculator {
+        ) -> ThirdSecondCalculator<
+            'a,
+            SteppingObject,
+            KFunctionType,
+            QFunctionType,
+            FunctionType,
+            Number,
+        > {
+            ThirdSecondCalculator {
                 stepping,
                 kfunc,
                 qfunc,
                 ffunc,
                 y1,
-                hi2,
+                hi1,
                 y2,
                 n,
             }
@@ -97,7 +112,14 @@ pub mod first_third_calculator {
             FunctionType: Function<Number>,
             Number: NumberTrait,
         > CoeffCalculator<Number>
-        for FirstThirdCalculator<'a, SteppingObject, KFunctionType, QFunctionType, FunctionType, Number>
+        for ThirdSecondCalculator<
+            'a,
+            SteppingObject,
+            KFunctionType,
+            QFunctionType,
+            FunctionType,
+            Number,
+        >
     {
         fn calc_a(&self, i: usize) -> Number {
             if i == 0 {
@@ -114,7 +136,10 @@ pub mod first_third_calculator {
 
         fn calc_b(&self, i: usize) -> Number {
             if i == 0 {
-                Number::from(0)
+                Number::from(-1)
+                    * self.stepping.middle_point(i).pow(self.n)
+                    * self.kfunc.calc(self.stepping.middle_point(i))
+                    / self.stepping.step(i)
             } else if i < self.stepping.points().len() - 1 {
                 Number::from(-1)
                     * self.stepping.middle_point(i).pow(self.n)
@@ -127,7 +152,13 @@ pub mod first_third_calculator {
 
         fn calc_c(&self, i: usize) -> Number {
             if i == 0 {
-                Number::from(1)
+                self.stepping.middle_point(i).pow(self.n)
+                    * self.kfunc.calc(self.stepping.middle_point(i))
+                    / self.stepping.step(i + 1)
+                    + Number::from(1) / (Number::from(self.n) + Number::from(1))
+                        * self.stepping.step(i)
+                        * self.stepping.middle_point(i).pow(self.n)
+                        * self.qfunc.calc(self.stepping.point(i))
             } else if i < self.stepping.points().len() - 1 {
                 self.stepping.middle_point(i - 1).pow(self.n)
                     * self.kfunc.calc(self.stepping.middle_point(i - 1))
@@ -139,21 +170,13 @@ pub mod first_third_calculator {
                         * self.stepping.point(i).pow(self.n)
                         * self.qfunc.calc(self.stepping.point(i))
             } else if i == self.stepping.points().len() - 1 {
-                // Contribution from the left neighbor (i-1)
-                let a_term = self.stepping.middle_point(i - 1).pow(self.n)
+                self.stepping.middle_point(i - 1).pow(self.n)
                     * self.kfunc.calc(self.stepping.middle_point(i - 1))
-                    / self.stepping.step(i);
-
-                // Source term at the boundary (if any)
-                let q_term = self.stepping.cross_step(i)
-                    * self.stepping.point(i).pow(self.n)
-                    * self.qfunc.calc(self.stepping.point(i));
-
-                // Robin boundary condition
-                let boundary_term = self.stepping.point(i).pow(self.n) * self.hi2;
-
-                // Return the sum of all terms
-                a_term + q_term + boundary_term
+                    / self.stepping.step(i)
+                    + self.stepping.point(i).pow(self.n)
+                        * self.qfunc.calc(self.stepping.point(i))
+                        / self.stepping.cross_step(i)
+                    - self.stepping.point(i).pow(self.n)
             } else {
                 panic!("i > self.stepping.points().len()")
             }
@@ -161,7 +184,10 @@ pub mod first_third_calculator {
 
         fn calc_g(&self, i: usize) -> Number {
             if i == 0 {
-                self.y1
+                Number::from(1) / (Number::from(self.n) + Number::from(1))
+                    * self.stepping.step(i)
+                    * self.stepping.middle_point(i).pow(self.n)
+                    * self.ffunc.calc(self.stepping.point(i))
             } else if i < self.stepping.points().len() - 1 {
                 self.stepping.cross_step(i)
                     * self.stepping.point(i).pow(self.n)
@@ -170,7 +196,6 @@ pub mod first_third_calculator {
                 self.stepping.cross_step(i)
                     * self.stepping.point(i).pow(self.n)
                     * self.ffunc.calc(self.stepping.point(i))
-                    + self.stepping.point(i).pow(self.n) * self.y2
             } else {
                 panic!("i >= self.stepping.points().len()")
             }

@@ -45,7 +45,7 @@ fn exercise_accuracy_base_example() {
         let splitter = IntervalSplitter::new(points.clone());
 
         let coeff_calculator_v =
-            math::coeff_calculator::first_third_calculator::FirstThirdCalculator::new(
+            math::coeff_calculator::third_second_calculator::ThirdSecondCalculator::new(
                 splitter,
                 &kfunc,
                 &qfunc,
@@ -143,7 +143,7 @@ fn exercise_accuracy_kr_high_accuracy() {
         let splitter = IntervalSplitter::new(points.clone());
 
         let coeff_calculator_v =
-            math::coeff_calculator::first_third_calculator::FirstThirdCalculator::new(
+            math::coeff_calculator::third_second_calculator::ThirdSecondCalculator::new(
                 splitter,
                 &kfunc,
                 &qfunc,
@@ -241,7 +241,7 @@ fn exercise_accuracy_kr_no_accuracy() {
         let splitter = IntervalSplitter::new(points.clone());
 
         let coeff_calculator_v =
-            math::coeff_calculator::first_third_calculator::FirstThirdCalculator::new(
+            math::coeff_calculator::third_second_calculator::ThirdSecondCalculator::new(
                 splitter,
                 &kfunc,
                 &qfunc,
