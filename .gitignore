@@ -5,9 +5,6 @@ target
 # Ignore Cargo.lock
 Cargo.lock
 
-# Ignore local configuration
-*.toml
-
 # Ignore profiling files
 *.prof
 
