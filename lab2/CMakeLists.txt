@@ -6,31 +6,46 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_subdirectory(external/src/eigen)
 
-set(EXECUTABLE_NAME main)
-
-add_executable(${EXECUTABLE_NAME})
-
-target_sources(${EXECUTABLE_NAME}
-  PUBLIC
-    external/src/contract/src/contract.cpp
+add_library(${PROJECT_NAME} STATIC
+  external/src/contract/src/contract.cpp
     
-    src/default_impl/euler_explicit_method.cc
-    src/default_impl/euler_implicit_method.cc
-    src/default_impl/main_matrix_calculator.cc
+  src/default_impl/euler_explicit_method.cc
+  src/default_impl/euler_implicit_method.cc
+  src/default_impl/main_matrix_calculator.cc
     
-    src/interval_splitter.cc
-    src/main.cc
+  src/interval_splitter.cc
 )
 
-target_include_directories(${EXECUTABLE_NAME}
+target_include_directories(${PROJECT_NAME}
   PUBLIC
     include/public
 
     external/src/contract/include
 )
 
-
-target_link_libraries(${EXECUTABLE_NAME}
+target_link_libraries(${PROJECT_NAME}
   PUBLIC
     Eigen3::Eigen
+)
+
+add_executable(${PROJECT_NAME}-main src/main.cc)
+target_link_libraries(${PROJECT_NAME}-main ${PROJECT_NAME})
+
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG        v1.14.0
+)
+FetchContent_MakeAvailable(googletest)
+
+add_executable(${PROJECT_NAME}-test
+  tests/test.cc
+  tests/explicit-eugen-test.cc
+  tests/implicit-eugen-test.cc
+)
+
+target_link_libraries(${PROJECT_NAME}-test
+  ${PROJECT_NAME}
+  gtest
 )
