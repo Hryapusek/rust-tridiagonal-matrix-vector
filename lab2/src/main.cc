@@ -160,11 +160,11 @@ void basic_example()
 
   auto r_index = 0;
   auto t_index = 1;
-  std::cout << "Temperature for r = " << r_interval.at(r_index + 1)
-            << " and t = " << t_interval.at(t_index) << " is " << result(r_index, t_index)
-            << std::endl;
-  std::cout << "Expected temperature is "
-            << expected_func(r_interval.at(r_index + 1), t_interval.at(t_index)) << std::endl;
+  // std::cout << "Temperature for r = " << r_interval.at(r_index + 1)
+  //           << " and t = " << t_interval.at(t_index) << " is " << result(r_index, t_index)
+  //           << std::endl;
+  // std::cout << "Expected temperature is "
+  //           << expected_func(r_interval.at(r_index + 1), t_interval.at(t_index)) << std::endl;
 }
 
 int main()
