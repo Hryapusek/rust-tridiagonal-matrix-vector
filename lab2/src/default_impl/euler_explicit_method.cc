@@ -25,5 +25,10 @@ auto DefaultEulerExplicitMethod::integrate(
     auto E = Eigen::MatrixXd::Identity(A.rows(), A.rows());
     result.col(i) = (E + H*A) * result.col(i - 1) + H*g;
   }
+
+  contract(fun)
+  {
+    postcondition(result.cols() == A.cols(), "result must have the same number of columns as A");
+  };
   return result;
 }
