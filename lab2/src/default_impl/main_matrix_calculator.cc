@@ -6,7 +6,7 @@
 
 #include <interval_splitter.hpp>
 
-auto DefaultMainMatrixCalculator::calc_a(size_t index) -> Number_t
+auto DefaultMainMatrixCalculator::calc_a(size_t index) const -> Number_t
 {
   contract(fun)
   {
@@ -18,10 +18,10 @@ auto DefaultMainMatrixCalculator::calc_a(size_t index) -> Number_t
     precondition(index < intervals_.size(), "index out of range");
   };
   return middle_point(intervals_, index) * params_->k(middle_point(intervals_, index), 0)
-       / calc_cross_h(intervals_, index) / intervals_.at(index) / calc_h(intervals_, index + 1);
+       / calc_cross_h(intervals_, index) / intervals_.at(index) / calc_h(intervals_, index);
 }
 
-auto DefaultMainMatrixCalculator::calc_b(size_t index) -> Number_t
+auto DefaultMainMatrixCalculator::calc_b(size_t index) const -> Number_t
 {
   contract(fun)
   {
@@ -43,7 +43,7 @@ auto DefaultMainMatrixCalculator::calc_b(size_t index) -> Number_t
 }
 
 /* clang-format off */
-auto DefaultMainMatrixCalculator::calc_c(size_t index) -> Number_t
+auto DefaultMainMatrixCalculator::calc_c(size_t index) const -> Number_t
 {
   contract(fun) {
     precondition(index != 0, "You should not calculate anything for index == 0 - you already have v function");
@@ -51,7 +51,7 @@ auto DefaultMainMatrixCalculator::calc_c(size_t index) -> Number_t
   };
   if (index == intervals_.size() - 1) {
     return - middle_point(intervals_, index) * params_->k(middle_point(intervals_, index), 0)
-                 / calc_h(intervals_, index + 1)
+                 / calc_h(intervals_, index)
                  / calc_cross_h(intervals_, index)
                  / intervals_[index]
             - params_->hi2
@@ -74,7 +74,7 @@ auto DefaultMainMatrixCalculator::calc_c(size_t index) -> Number_t
 /* clang-format on */
 
 /* clang-format off */
-auto DefaultMainMatrixCalculator::calc_g(size_t index) -> Number_t {
+auto DefaultMainMatrixCalculator::calc_g(size_t index) const -> Number_t {
   contract(fun) {
     precondition(index != 0, "You should not calculate anything for index == 0 - you already have v function");
   };
