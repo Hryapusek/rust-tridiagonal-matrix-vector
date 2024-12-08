@@ -75,7 +75,7 @@ double print_result_table(
       sum_error += abs(expected_func(r_intervals.at(i), t_intervals.at(j)) - result(i, j));
     }
   }
-  return sum_error / std::pow(1.02, t_intervals.size());
+  return sum_error / std::pow(1.015, t_intervals.size());
 }
 
 Eigen::MatrixXd build_result(
@@ -95,21 +95,21 @@ Eigen::MatrixXd build_result(
   double max_dis = 0;
   switch(method) {
     case IntegrateMethod::EULER_EXPLICIT:
-      max_dis = 5e-3;
+      max_dis = 1e-3;
       left = -0.005;
       right = 0.005;
       break;
 
     case IntegrateMethod::EULER_IMPLICIT:
-      max_dis = 1e-2;
+      max_dis = 5e-3;
       left = -0.000001;
       right = 0.000001;
       break;
 
     case IntegrateMethod::RKF:
-      max_dis = 1e-1;
-      left = -0.00000000001;
-      right = 0.00000000001;
+      max_dis = 1e-2;
+      left = -0.00000001;
+      right = 0.00000001;
       break;
 
     default: break;
