@@ -8,8 +8,8 @@ class IMainMatrixCalculator
 {
  public:
   using Number_t = double;
-  virtual auto calc_a(size_t index) const -> Number_t = 0;
-  virtual auto calc_b(size_t index) const -> Number_t = 0;
-  virtual auto calc_c(size_t index) const -> Number_t = 0;
-  virtual auto calc_g(size_t index) const -> Number_t = 0;
+  virtual auto calc_a(size_t r_index, size_t t) const -> Number_t = 0;
+  virtual auto calc_b(size_t r_index, size_t t) const -> Number_t = 0;
+  virtual auto calc_c(size_t r_index, size_t t) const -> Number_t = 0;
+  virtual auto calc_g(size_t r_index, size_t t) const -> Number_t = 0;
 };

@@ -5,14 +5,16 @@
 #include <contract/contract.hpp>
 
 auto DefaultEulerExplicitMethod::integrate(
-  Eigen::VectorXd const& start_v,
-  Eigen::MatrixXd const& A,
-  Eigen::VectorXd const& g,
+  Eigen::SparseVector<Number_t> const& start_v,
+  Eigen::SparseMatrix<Number_t> const& A,
+  Eigen::SparseVector<Number_t> const& g,
   std::vector<Number_t> const& points
-) -> Eigen::MatrixXd
+) -> Eigen::SparseMatrix<Number_t>
 {
-  Eigen::MatrixXd result =
-    Eigen::MatrixXd::Zero(A.rows(), points.size());  // Adjust columns based on intervals size
+  auto result = Eigen::SparseMatrix<Number_t>(
+    A.rows(),
+    points.size()
+  );  // Adjust columns based on intervals size
 
   contract(fun)
   {
@@ -27,10 +29,10 @@ auto DefaultEulerExplicitMethod::integrate(
 
   result.col(0) = start_v;
 
-  auto E = Eigen::MatrixXd::Identity(A.rows(), A.rows());
-  // for(size_t i = 1; i < intervals.size(); ++i) {              // Loop over intervals, not A.cols()
-  for(size_t i = 1; i < 2; ++i) {              // Loop over intervals, not A.cols()
-    auto H = points.at(i) - points.at(i - 1);           // Step size
+  auto E = Eigen::SparseMatrix<Number_t>(A.rows(), A.rows());
+  E.setIdentity();
+  for(size_t i = 1; i < points.size(); ++i) {                 // Loop over intervals, not A.cols()
+    auto H = points.at(i) - points.at(i - 1);                 // Step size
     result.col(i) = (E + H * A) * result.col(i - 1) + H * g;  // Euler update
   }
 

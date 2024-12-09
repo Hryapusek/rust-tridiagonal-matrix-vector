@@ -1,28 +1,29 @@
 #include <default_impl/rkf_method.hpp>
 
+#include <Eigen/Sparse>
+
 auto RKFMethod::integrate(
-  Eigen::VectorXd const& start_v,
-  const Eigen::MatrixXd& A,
-  Eigen::VectorXd const& g,
-  std::vector<Number_t> const& intervals
-) -> Eigen::MatrixXd
+  Eigen::SparseVector<Number_t> const& start_v,
+  Eigen::SparseMatrix<Number_t> const& A,
+  Eigen::SparseVector<Number_t> const& g,
+  std::vector<Number_t> const& points
+) -> Eigen::SparseMatrix<Number_t>
 {
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(A.rows(), A.cols());
+  auto result = Eigen::SparseMatrix<Number_t>(A.rows(), A.cols());
   result.col(0) = start_v;
-  
-  for (size_t i = 1; i < 2; ++i) {
-  // for (size_t i = 1; i < A.cols() - 1; ++i) {
-    auto H = intervals.at(i) - intervals.at(i - 1);
-    
-    Eigen::VectorXd u = result.col(i - 1);
-    
-    Eigen::VectorXd k1 = H * (A * u + g);
-    Eigen::VectorXd k2 = H * (A * (u + 0.5 * k1) + g);
-    Eigen::VectorXd k3 = H * (A * (u + 0.5 * k2) + g);
-    Eigen::VectorXd k4 = H * (A * (u + k3) + g);
-    
+
+  for(size_t i = 1; i < A.cols() - 1; ++i) {
+    auto H = points.at(i) - points.at(i - 1);
+
+    Eigen::SparseMatrix<Number_t> u = result.col(i - 1);
+
+    Eigen::SparseMatrix<Number_t> k1 = (H * (A * u + g));
+    Eigen::SparseMatrix<Number_t> k2 = (H * (A * (u + 0.5 * k1) + g));
+    Eigen::SparseMatrix<Number_t> k3 = (H * (A * (u + 0.5 * k2) + g));
+    Eigen::SparseMatrix<Number_t> k4 = (H * (A * (u + k3) + g));
+
     result.col(i) = u + (k1 + 2 * k2 + 2 * k3 + k4) / 6;
   }
-  
+
   return result;
 }

@@ -2,15 +2,15 @@
 
 #include <defines.hpp>
 
-#include <Eigen/Dense>
+#include <Eigen/Sparse>
 
 class IBaseIntegrate
 {
  public:
   virtual auto integrate(
-    Eigen::VectorXd const& start_v,
-    Eigen::MatrixXd const& A,
-    Eigen::VectorXd const& g,
+    Eigen::SparseVector<Number_t> const& start_v,
+    Eigen::SparseMatrix<Number_t> const& A,
+    Eigen::SparseVector<Number_t> const& g,
     std::vector<Number_t> const& points
-  ) -> Eigen::MatrixXd = 0;
+  ) -> Eigen::SparseMatrix<Number_t> = 0;
 };

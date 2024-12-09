@@ -18,13 +18,13 @@ auto build_main_matrix(DefaultMainMatrixCalculator const& calc) -> Eigen::Sparse
   for(size_t row = 0; row < calc.r_points().size() - 1; ++row) {
     for(size_t col = 0; col < calc.r_points().size() - 1; ++col) {
       if(col == row) {
-        main_matrix.insert(row, col) = calc.calc_c(row + 1);
+        main_matrix.insert(row, col) = calc.calc_c(row + 1, 0);
       }
       else if(col == row + 1 and row != calc.r_points().size() - 1) {
-        main_matrix.insert(row, col) = calc.calc_b(row + 1);
+        main_matrix.insert(row, col) = calc.calc_b(row + 1, 0);
       }
       else if(col == row - 1 and row != 0) {
-        main_matrix.insert(row, col) = calc.calc_a(row + 1);
+        main_matrix.insert(row, col) = calc.calc_a(row + 1, 0);
       }
       else {
         (void)0;
@@ -35,11 +35,11 @@ auto build_main_matrix(DefaultMainMatrixCalculator const& calc) -> Eigen::Sparse
   return main_matrix;
 }
 
-auto build_g_vector(DefaultMainMatrixCalculator const& calc) -> Eigen::VectorXd
+auto build_g_vector(DefaultMainMatrixCalculator const& calc) -> Eigen::SparseVector<Number_t>
 {
-  Eigen::VectorXd g = Eigen::VectorXd::Zero(calc.r_points().size() - 1);
+  auto g = Eigen::SparseVector<Number_t>(calc.r_points().size() - 1);
   for(size_t row = 0; row < calc.r_points().size() - 1; ++row) {
-    g(row) = calc.calc_g(row + 1);
+    g.insert(row) = calc.calc_g(row + 1, 0);
   }
   return g;
 }
@@ -70,15 +70,15 @@ void basic_example()
 
   auto expected_func = [](double r, double t) { return t + 2 * r; };
 
-  RKFMethod method;
-  Eigen::VectorXd start_v(r_points.size() - 1);
+  DefaultEulerImplicitMethod method;
+  Eigen::SparseVector<Number_t> start_v(r_points.size() - 1);
   for(auto i = 0; i < r_points.size() - 1; ++i) {
-    start_v(i) = params->phi(r_points.at(i + 1));
+    start_v.insert(i) = params->phi(r_points.at(i + 1));
   }
   auto t_points = split_interval(0, params->T, 1'0000);
   auto result = method.integrate(start_v, main_matrix, g_vector, t_points);
 
-  std::cout << "result: " << result(0, 1) << std::endl;
+  std::cout << "result: " << result.coeff(0, 1) << std::endl;
   std::cout << "expected: " << expected_func(r_points.at(1), t_points.at(1)) << std::endl;
 }
 

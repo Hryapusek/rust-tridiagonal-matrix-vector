@@ -1,16 +1,16 @@
 #pragma once
 
-#include <interface/i_euler_explicit_method.hpp>
+#include <interface/i_base_integrate.hpp>
 
 #include <Eigen/Dense>
 
-class RKFMethod
+class RKFMethod : public IBaseIntegrate
 {
  public:
   auto integrate(
-    Eigen::VectorXd const& start_v,
-    const Eigen::MatrixXd& A,
-    Eigen::VectorXd const& g,
-    std::vector<Number_t> const& intervals
-  ) -> Eigen::MatrixXd;
+    Eigen::SparseVector<Number_t> const& start_v,
+    Eigen::SparseMatrix<Number_t> const& A,
+    Eigen::SparseVector<Number_t> const& g,
+    std::vector<Number_t> const& points
+  ) -> Eigen::SparseMatrix<Number_t> override;
 };
