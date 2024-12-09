@@ -2,7 +2,7 @@
 
 auto RKFMethod::integrate(
   Eigen::VectorXd const& start_v,
-  Eigen::MatrixXd& A,
+  const Eigen::MatrixXd& A,
   Eigen::VectorXd const& g,
   std::vector<Number_t> const& intervals
 ) -> Eigen::MatrixXd
@@ -10,7 +10,8 @@ auto RKFMethod::integrate(
   Eigen::MatrixXd result = Eigen::MatrixXd::Zero(A.rows(), A.cols());
   result.col(0) = start_v;
   
-  for (size_t i = 1; i < A.cols() - 1; ++i) {
+  for (size_t i = 1; i < 2; ++i) {
+  // for (size_t i = 1; i < A.cols() - 1; ++i) {
     auto H = intervals.at(i) - intervals.at(i - 1);
     
     Eigen::VectorXd u = result.col(i - 1);

@@ -12,6 +12,7 @@ add_library(${PROJECT_NAME} STATIC
   src/default_impl/euler_explicit_method.cc
   src/default_impl/euler_implicit_method.cc
   src/default_impl/main_matrix_calculator.cc
+  src/default_impl/rkf_method.cc
     
   src/interval_splitter.cc
 )
