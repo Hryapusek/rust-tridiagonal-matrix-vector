@@ -43,8 +43,8 @@ void solve_tridiagonal(
 }
 
 auto DefaultEulerImplicitMethod::integrate(
-    Eigen::SparseVector<Number_t> const& start_v,
-    Eigen::SparseMatrix<Number_t> const& A,
+    Eigen::VectorX<Number_t> const& start_v,
+    Eigen::MatrixX<Number_t> const& A,
     Eigen::SparseVector<Number_t> const& g,
     std::vector<Number_t> const& points
 ) -> Eigen::SparseMatrix<Number_t>
@@ -63,7 +63,7 @@ auto DefaultEulerImplicitMethod::integrate(
         );
     };
 
-    result.col(0) = start_v;
+    result.col(0) = start_v.sparseView();
 
     auto E = Eigen::SparseMatrix<Number_t>(A.rows(), A.rows());
     E.setIdentity();

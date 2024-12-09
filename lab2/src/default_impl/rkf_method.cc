@@ -3,16 +3,16 @@
 #include <Eigen/Sparse>
 
 auto RKFMethod::integrate(
-  Eigen::SparseVector<Number_t> const& start_v,
-  Eigen::SparseMatrix<Number_t> const& A,
+  Eigen::VectorX<Number_t> const& start_v,
+  Eigen::MatrixX<Number_t> const& A,
   Eigen::SparseVector<Number_t> const& g,
   std::vector<Number_t> const& points
 ) -> Eigen::SparseMatrix<Number_t>
 {
   auto result = Eigen::SparseMatrix<Number_t>(A.rows(), A.cols());
-  result.col(0) = start_v;
+  result.col(0) = start_v.sparseView();
 
-  for(size_t i = 1; i < A.cols() - 1; ++i) {
+  for(size_t i = 1; i < points.size(); ++i) {
     auto H = points.at(i) - points.at(i - 1);
 
     Eigen::SparseMatrix<Number_t> u = result.col(i - 1);
