@@ -57,7 +57,7 @@ void basic_example()
 
   params->k = [](double r, double t) { return 1.0; };
   params->q = [](double r, double t) { return 3.0; };
-  params->f = [](double r, double t) { return 3 * t + 6 * r - 1; };
+  params->f = [](double r, double t) { return 3 * t + 6 * r + 1 - 2 / r; };
 
   auto r_points = split_interval(params->Rl, params->Rr, 1'000);
   DefaultMainMatrixCalculator calc(params, r_points);
@@ -75,7 +75,7 @@ void basic_example()
   for(auto i = 0; i < r_points.size() - 1; ++i) {
     start_v(i) = params->phi(r_points.at(i + 1));
   }
-  auto t_points = split_interval(0, params->T, 1000000);
+  auto t_points = split_interval(0, params->T, 1'0000);
   auto result = method.integrate(start_v, main_matrix, g_vector, t_points);
 
   std::cout << "result: " << result(0, 1) << std::endl;

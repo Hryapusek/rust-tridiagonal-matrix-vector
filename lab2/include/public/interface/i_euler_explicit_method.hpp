@@ -1,6 +1,6 @@
 #pragma once
 
-#include <interface/i_euler_method.hpp>
+#include <interface/i_base_integrate.hpp>
 
-class IEulerExplicitMethod : public IEulerMethod
+class IEulerExplicitMethod : public IBaseIntegrate
 {};
