@@ -18,10 +18,10 @@ class DefaultMainMatrixCalculator : public IMainMatrixCalculator
     , r_points_(std::move(r_points))
   {}
 
-  auto calc_a(size_t r_index, size_t t) const -> Number_t override;
-  auto calc_b(size_t r_index, size_t t) const -> Number_t override;
-  auto calc_c(size_t r_index, size_t t) const -> Number_t override;
-  auto calc_g(size_t r_index, size_t t) const -> Number_t override;
+  auto calc_a(size_t r_index, Number_t t) const -> Number_t override;
+  auto calc_b(size_t r_index, Number_t t) const -> Number_t override;
+  auto calc_c(size_t r_index, Number_t t) const -> Number_t override;
+  auto calc_g(size_t r_index, Number_t t) const -> Number_t override;
 
   auto r_points() const -> std::vector<Number_t> const& { return r_points_; }
 

@@ -31,7 +31,8 @@ auto DefaultEulerExplicitMethod::integrate(
 
   auto E = Eigen::SparseMatrix<Number_t>(A.rows(), A.rows());
   E.setIdentity();
-  for(size_t i = 1; i < points.size(); ++i) {                 // Loop over intervals, not A.cols()
+  for(size_t i = 1; i < 2; ++i) {                 // Loop over intervals, not A.cols()
+  // for(size_t i = 1; i < points.size(); ++i) {
     auto H = points.at(i) - points.at(i - 1);                 // Step size
     result.col(i) = (E + H * A) * result.col(i - 1) + H * g;  // Euler update
   }

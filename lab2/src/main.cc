@@ -10,7 +10,7 @@
 #include <default_impl/euler_implicit_method.hpp>
 #include <default_impl/rkf_method.hpp>
 
-auto build_main_matrix(DefaultMainMatrixCalculator const& calc) -> Eigen::SparseMatrix<Number_t>
+auto build_main_matrix(DefaultMainMatrixCalculator const& calc, double t) -> Eigen::SparseMatrix<Number_t>
 {
   Eigen::SparseMatrix<Number_t> main_matrix(calc.r_points().size() - 1, calc.r_points().size() - 1);
   main_matrix.setZero();
@@ -18,13 +18,13 @@ auto build_main_matrix(DefaultMainMatrixCalculator const& calc) -> Eigen::Sparse
   for(size_t row = 0; row < calc.r_points().size() - 1; ++row) {
     for(size_t col = 0; col < calc.r_points().size() - 1; ++col) {
       if(col == row) {
-        main_matrix.insert(row, col) = calc.calc_c(row + 1, 0);
+        main_matrix.insert(row, col) = calc.calc_c(row + 1, t);
       }
       else if(col == row + 1 and row != calc.r_points().size() - 1) {
-        main_matrix.insert(row, col) = calc.calc_b(row + 1, 0);
+        main_matrix.insert(row, col) = calc.calc_b(row + 1, t);
       }
       else if(col == row - 1 and row != 0) {
-        main_matrix.insert(row, col) = calc.calc_a(row + 1, 0);
+        main_matrix.insert(row, col) = calc.calc_a(row + 1, t);
       }
       else {
         (void)0;
@@ -35,11 +35,11 @@ auto build_main_matrix(DefaultMainMatrixCalculator const& calc) -> Eigen::Sparse
   return main_matrix;
 }
 
-auto build_g_vector(DefaultMainMatrixCalculator const& calc) -> Eigen::SparseVector<Number_t>
+auto build_g_vector(DefaultMainMatrixCalculator const& calc, Number_t t) -> Eigen::SparseVector<Number_t>
 {
   auto g = Eigen::SparseVector<Number_t>(calc.r_points().size() - 1);
   for(size_t row = 0; row < calc.r_points().size() - 1; ++row) {
-    g.insert(row) = calc.calc_g(row + 1, 0);
+    g.insert(row) = calc.calc_g(row + 1, t);
   }
   return g;
 }
@@ -62,15 +62,15 @@ void basic_example()
   auto r_points = split_interval(params->Rl, params->Rr, 1'000);
   DefaultMainMatrixCalculator calc(params, r_points);
 
-  auto main_matrix = build_main_matrix(calc);
+  auto main_matrix = build_main_matrix(calc, 0);
   std::cout << main_matrix.topLeftCorner(5, 5) << std::endl;
 
-  auto g_vector = build_g_vector(calc);
+  auto g_vector = build_g_vector(calc, 0);
   // std::cout << g_vector << std::endl;
 
   auto expected_func = [](double r, double t) { return t + 2 * r; };
 
-  DefaultEulerImplicitMethod method;
+  DefaultEulerExplicitMethod method;
   Eigen::SparseVector<Number_t> start_v(r_points.size() - 1);
   for(auto i = 0; i < r_points.size() - 1; ++i) {
     start_v.insert(i) = params->phi(r_points.at(i + 1));
