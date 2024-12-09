@@ -28,7 +28,8 @@ auto DefaultEulerExplicitMethod::integrate(
   result.col(0) = start_v;
 
   auto E = Eigen::MatrixXd::Identity(A.rows(), A.rows());
-  for(size_t i = 1; i < intervals.size(); ++i) {              // Loop over intervals, not A.cols()
+  // for(size_t i = 1; i < intervals.size(); ++i) {              // Loop over intervals, not A.cols()
+  for(size_t i = 1; i < 2; ++i) {              // Loop over intervals, not A.cols()
     auto H = intervals.at(i) - intervals.at(i - 1);           // Step size
     result.col(i) = (E + H * A) * result.col(i - 1) + H * g;  // Euler update
   }
