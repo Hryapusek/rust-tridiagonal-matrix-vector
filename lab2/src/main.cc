@@ -92,7 +92,7 @@ auto integrate(
     total_integrate_time += integrate_time;
     result.col(i) = integrated_result.col(1);
     std::cerr << "Time for main matrix: " << main_matrix_time
-    << "us, Time for integration: " << integrate_time << "us\r";
+              << "us, Time for integration: " << integrate_time << "us\r";
     std::cerr.flush();
   }
   std::cerr << "\n";
@@ -107,16 +107,15 @@ auto integrate(
 void print_table_header()
 {
   // Set column widths for consistent formatting
-  std::cout << std::setw(20) << std::left << "Method Name" << std::setw(15) << "T Steps Count"
-            << std::setw(12) << "T Step Size" << std::setw(15) << "R Steps Count" << std::setw(12)
-            << "R Step Size" << std::setw(20) << "Sum Inaccuracy" << std::setw(20)
+  std::cout << std::setw(20) << std::left << "Method Name" << std::setw(15) << "R Steps Count"
+            << std::setw(12) << "R Step Size" << std::setw(15) << "T Steps Count" << std::setw(12)
+            << "T Step Size" << std::setw(20) << "Sum Inaccuracy" << std::setw(20)
             << "Max Inaccuracy" << std::setw(30) << "Sum Inaccuracy (2nd Column)" << std::setw(30)
             << "Max Inaccuracy (2nd Column)" << std::setw(30) << "Sum Inaccuracy (Middle Col)"
             << std::setw(30) << "Max Inaccuracy (Middle Col)" << std::setw(30)
             << "Sum Inaccuracy (Last Col)" << std::setw(30) << "Max Inaccuracy (Last Col)"
-            << std::setw(40) << "Main matrix build time (us)"
-            << std::setw(40) << "Integration time (us)"
-            << std::endl;
+            << std::setw(40) << "Main matrix build time (us)" << std::setw(40)
+            << "Integration time (us)" << std::endl;
 
   // Print a separator line
   std::cout << std::string(260, '-') << std::endl;
@@ -179,10 +178,10 @@ void print_row(
 
   // Print the row in the desired format
   std::cout << std::setw(20) << std::left << method.name()  // Method name
-            << std::setw(15) << t_steps_count               // T Steps Count
-            << std::setw(12) << t_step_size                 // T Step Size
             << std::setw(15) << r_steps_count               // R Steps Count
             << std::setw(12) << r_step_size                 // R Step Size
+            << std::setw(15) << t_steps_count               // T Steps Count
+            << std::setw(12) << t_step_size                 // T Step Size
             << std::setw(20) << std::fixed << std::setprecision(6)
             << sum_inaccuracy_total                         // Sum Inaccuracy (Total)
             << std::setw(20) << max_inaccuracy_total        // Max Inaccuracy (Total)
@@ -191,9 +190,8 @@ void print_row(
             << std::setw(30) << sum_inaccuracy_middle_col   // Sum Inaccuracy (Middle Column)
             << std::setw(30) << max_inaccuracy_middle_col   // Max Inaccuracy (Middle Column)
             << std::setw(30) << sum_inaccuracy_last_col     // Sum Inaccuracy (Last Column)
-            << std::setw(30) << max_inaccuracy_last_col    // Max Inaccuracy (Last Column)
-            << std::setw(40) << build_main_matrix_time
-            << std::setw(40) << integration_time
+            << std::setw(30) << max_inaccuracy_last_col     // Max Inaccuracy (Last Column)
+            << std::setw(40) << build_main_matrix_time << std::setw(40) << integration_time
             << std::endl;
 }
 
@@ -238,11 +236,21 @@ void basic_example()
 
         auto result = integrate(calc, r_points, t_points, start_v, *method);
 
-        print_row(expected_func, r_points, t_points, start_v, std::get<0>(result), *method, std::get<1>(result), std::get<2>(result));
+        print_row(
+          expected_func,
+          r_points,
+          t_points,
+          start_v,
+          std::get<0>(result),
+          *method,
+          std::get<1>(result),
+          std::get<2>(result)
+        );
         std::cerr << "Finished for r: " << r_count << " t: " << t_count << "\n";
         std::cerr.flush();
         std::cout.flush();
       }
+      std::cout << std::string(10, '-') << std::endl;
     }
     std::cout << std::string(50, '-') << std::endl;
   }
