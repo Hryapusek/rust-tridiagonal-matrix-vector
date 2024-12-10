@@ -195,23 +195,8 @@ void print_row(
             << std::endl;
 }
 
-void basic_example()
+void do_all(std::shared_ptr<InputParameters> params, R_T_Function_type expected_func)
 {
-  std::shared_ptr<InputParameters> params = std::make_shared<InputParameters>();
-  params->Rl = 1;
-  params->Rr = 10;
-  params->T = 1;
-  params->v1 = [](double t) { return 2 + t; };
-  params->hi2 = 3;
-  params->phi = [](double r) { return 2 * r; };
-  params->v2 = [](double t) { return 62 + 3 * t; };
-
-  params->k = [](double r, double t) { return 1.0; };
-  params->q = [](double r, double t) { return 3.0; };
-  params->f = [](double r, double t) { return 3 * t + 6 * r + 1 - 2 / r; };
-
-  auto expected_func = [](double r, double t) { return t + 2 * r; };
-
   print_table_header();  // Print header
 
   static constexpr auto t_interval_counts = {100, 500, 1'000, 2'000, 5'000, 10'000};
@@ -256,8 +241,52 @@ void basic_example()
   }
 }
 
+void basic_example()
+{
+  std::shared_ptr<InputParameters> params = std::make_shared<InputParameters>();
+  params->Rl = 1;
+  params->Rr = 10;
+  params->T = 1;
+  params->v1 = [](double t) { return 2 + t; };
+  params->hi2 = 3;
+  params->phi = [](double r) { return 2 * r; };
+  params->v2 = [](double t) { return 62 + 3 * t; };
+
+  params->k = [](double r, double t) { return 1.0; };
+  params->q = [](double r, double t) { return 3.0; };
+  params->f = [](double r, double t) { return 3 * t + 6 * r + 1 - 2 / r; };
+
+  auto expected_func = [](double r, double t) { return t + 2 * r; };
+
+  do_all(params, expected_func);
+}
+
+void hard_example()
+{
+  std::shared_ptr<InputParameters> params = std::make_shared<InputParameters>();
+  params->Rl = 1;
+  params->Rr = 10;
+  params->T = 1;
+  params->v1 = [](double t) { return 5 + t * t; };
+  params->hi2 = 5;
+  params->phi = [](double r) { return 5 * r * r; };
+  params->v2 = [](double t) { return 5*(500 + t * t) + (20 + t*t)*(100 + t * t); };
+
+  params->k = [](double r, double t) { return 2 * r + t * t; };
+  params->q = [](double r, double t) { return 3 * r * r + t; };
+  params->f = [](double r, double t) {
+    return 2 * t - 40 - 20 * t * t + 15 * r * r * r * r + 3 * r * r * t * t + 5 * r * r * t
+         + t * t * t;
+  };
+
+  auto expected_func = [](double r, double t) { return 5 * r * r + t * t; };
+
+  do_all(params, expected_func);
+}
+
 int main()
 {
-  basic_example();
+  // basic_example();
+  hard_example();
   return 0;
 }
