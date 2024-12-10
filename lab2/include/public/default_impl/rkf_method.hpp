@@ -13,4 +13,6 @@ class RKFMethod : public IBaseIntegrate
     Eigen::SparseVector<Number_t> const& g,
     std::vector<Number_t> const& points
   ) -> Eigen::SparseMatrix<Number_t> override;
+
+  auto name() -> std::string override { return "RKF Method"; }
 };

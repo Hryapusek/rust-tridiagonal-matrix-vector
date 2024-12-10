@@ -11,7 +11,7 @@ auto DefaultEulerExplicitMethod::integrate(
   std::vector<Number_t> const& points
 ) -> Eigen::SparseMatrix<Number_t>
 {
-  auto result = Eigen::SparseMatrix<Number_t>(
+  auto result = Eigen::MatrixX<Number_t>(
     A.rows(),
     points.size()
   );  // Adjust columns based on intervals size
@@ -31,11 +31,11 @@ auto DefaultEulerExplicitMethod::integrate(
 
   auto E = Eigen::SparseMatrix<Number_t>(A.rows(), A.rows());
   E.setIdentity();
+  auto H = points.at(1) - points.at(0);                 // Step size
   for(size_t i = 1; i < 2; ++i) {                 // Loop over intervals, not A.cols()
   // for(size_t i = 1; i < points.size(); ++i) {
-    auto H = points.at(i) - points.at(i - 1);                 // Step size
     result.col(i) = (E + H * A) * result.col(i - 1) + H * g;  // Euler update
   }
 
-  return result;
+  return result.sparseView();
 }

@@ -38,7 +38,8 @@ auto DefaultMainMatrixCalculator::calc_b(size_t r_index, Number_t t) const -> Nu
     );
     precondition(r_index < r_points_.size(), "index out of range");
   };
-  auto up = middle_point(r_points_, r_index + 1) * params_->k(middle_point(r_points_, r_index + 1), t);
+  auto up = middle_point(r_points_, r_index + 1)
+          * params_->k(middle_point(r_points_, r_index + 1), t);
   auto down = calc_h(r_points_, r_index + 1);
   return up / down;
 }
@@ -68,7 +69,7 @@ auto DefaultMainMatrixCalculator::calc_c(size_t r_index, Number_t t) const -> Nu
 
     return -m_point_index * k_index / h_index_plus_1
            -m_point_index_plus_1 * k_index_plus_1 / h_index_plus_1
-           -q_index * calc_cross_h(r_points_, r);
+           -q_index * cross_h_index;
   }
   assert(false);
 }
@@ -81,14 +82,16 @@ auto DefaultMainMatrixCalculator::calc_g(size_t r_index, Number_t t) const -> Nu
     precondition(r_index != 0, "You should not calculate anything for index == 0 - you already have v function");
   };
   if (r_index == 1) {
-    return params_->f(r_points_[r_index], t) +
+    return params_->f(r_points_[r_index], t)
+            * calc_cross_h(r_points_, r_index-1)
+              +
                middle_point(r_points_, r_index) 
                * params_->k(middle_point(r_points_, r_index), t)
-               / calc_h(r_points_, r_index + 1)
-               * params_->v1(0);
+               / calc_h(r_points_, r_index)
+               * params_->v1(t);
   } else if (r_index == r_points_.size() - 1) {
     return params_->f(r_points_[r_index], t) * calc_cross_h(r_points_, r_index)
-            + params_->v2(0);
+            + params_->v2(t);
   } else {
     return params_->f(r_points_[r_index], t)  * calc_cross_h(r_points_, r_index);
   }

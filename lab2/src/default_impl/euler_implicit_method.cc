@@ -49,7 +49,7 @@ auto DefaultEulerImplicitMethod::integrate(
     std::vector<Number_t> const& points
 ) -> Eigen::SparseMatrix<Number_t>
 {
-    Eigen::SparseMatrix<Number_t> result(
+    Eigen::MatrixX<Number_t> result(
         A.rows(), points.size());  // Adjust the columns to match intervals
 
     contract(fun)
@@ -108,6 +108,6 @@ auto DefaultEulerImplicitMethod::integrate(
         result.col(i) = solution.sparseView();
     }
 
-    return result;
+    return result.sparseView();
 }
 

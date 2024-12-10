@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include <defines.hpp>
 
 #include <Eigen/Sparse>
@@ -13,4 +15,6 @@ class IBaseIntegrate
     Eigen::SparseVector<Number_t> const& g,
     std::vector<Number_t> const& points
   ) -> Eigen::SparseMatrix<Number_t> = 0;
+
+  virtual auto name() -> std::string { return "Unknown"; }
 };
